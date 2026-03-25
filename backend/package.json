@@ -1,0 +1,43 @@
+{
+  "name": "video-reference-backend",
+  "version": "1.0.0",
+  "description": "影视分镜参考库后端API",
+  "main": "dist/app.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "nodemon src/app.ts",
+    "start": "node dist/app.js",
+    "lint": "eslint src/**/*.ts",
+    "test": "jest"
+  },
+  "keywords": ["video", "reference", "filmmaking", "shots"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "node-cron": "^3.0.3",
+    "pg": "^8.11.3",
+    "redis": "^4.6.13",
+    "joi": "^17.12.2"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^20.11.30",
+    "@types/node-cron": "^3.0.11",
+    "@types/pg": "^8.11.4",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.2"
+  }
+}

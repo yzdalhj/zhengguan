@@ -1,0 +1,28 @@
+{
+  "name": "reframe-web",
+  "version": "1.0.0",
+  "description": "影视分镜参考库 - 前端Web界面",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix"
+  },
+  "dependencies": {
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0",
+    "pinia": "^2.1.7",
+    "axios": "^1.6.8",
+    "@vueuse/head": "^2.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8.57.0",
+    "eslint-plugin-vue": "^9.24.0",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.1",
+    "vite": "^5.2.8"
+  }
+}
