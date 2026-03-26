@@ -17,9 +17,7 @@ export interface BilibiliSearchOptions {
 }
 
 export const searchBilibili = async (options: BilibiliSearchOptions) => {
-  if (!BILIBILI_APP_KEY) {
-    throw new Error('Bilibili API key not configured');
-  }
+  // Bilibili 公开搜索接口不需要 API Key
 
   const { keyword, page = 1, pageSize = 50 } = options;
 
@@ -101,19 +99,29 @@ export const importBilibiliVideo = async (
   }
 
   const duration = info.duration;
-  if (duration < 15 || duration > 600) {
-    throw new Error(`Video duration ${duration}s is outside acceptable range (15s - 10min)`);
+  // 放宽时长限制：30秒 - 60分钟
+  if (duration < 30 || duration > 3600) {
+    throw new Error(`Video duration ${duration}s is outside acceptable range (30s - 60min)`);
   }
 
   const viewCount = info.stat?.view || 0;
-  if (viewCount < 1000) {
-    throw new Error(`Video has only ${viewCount} views, minimum is 1000`);
+  // 降低播放量要求：从 1000 降到 100
+  if (viewCount < 100) {
+    throw new Error(`Video has only ${viewCount} views, minimum is 100`);
   }
 
   const title = info.title;
   const description = info.desc;
   const thumbnailUrl = info.pic;
-  const uploadDate = new Date(info.created * 1000);
+  // 修复日期处理：Bilibili 的 created 是秒级时间戳
+  let uploadDate: Date | undefined;
+  if (info.created && typeof info.created === 'number' && !isNaN(info.created)) {
+    uploadDate = new Date(info.created * 1000);
+    // 验证日期是否有效
+    if (isNaN(uploadDate.getTime())) {
+      uploadDate = undefined;
+    }
+  }
   const likes = info.stat?.like || 0;
 
   let embedUrl = `//player.bilibili.com/player.html?bvid=${bvid}&page=1`;

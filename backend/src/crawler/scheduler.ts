@@ -85,10 +85,8 @@ export const runCrawler = async (): Promise<void> => {
 };
 
 export const startScheduler = (): void => {
-  if (!process.env.YOUTUBE_API_KEY && !process.env.BILIBILI_APP_KEY) {
-    console.log('No API keys configured, crawler scheduler disabled');
-    return;
-  }
+  // Bilibili 不需要 API Key，可以直接运行；YouTube 需要 API Key
+  console.log('Starting crawler scheduler (Bilibili ready, YouTube requires API key)');
 
   const tableCheck = async () => {
     try {

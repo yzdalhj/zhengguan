@@ -9,6 +9,7 @@ import videoRoutes from './routes/videos';
 import tagRoutes from './routes/tags';
 import userRoutes from './routes/user';
 import adminRoutes from './routes/admin';
+import { startScheduler } from './crawler/scheduler';
 
 dotenv.config();
 
@@ -105,6 +106,9 @@ const startServer = async () => {
   try {
     await connectRedis();
     await pool.connect();
+    
+    // 启动采集调度器
+    startScheduler();
     
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
