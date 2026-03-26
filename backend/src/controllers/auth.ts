@@ -8,8 +8,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'default_secret';
-const JWT_EXPIRE_IN = process.env.JWT_EXPIRE_IN || '7d';
+const JWT_SECRET: any = process.env.JWT_SECRET || 'default_secret';
+const JWT_EXPIRE_IN: any = process.env.JWT_EXPIRE_IN || '7d';
 
 export const register = async (
   req: Request,
@@ -69,7 +69,7 @@ export const login = async (
       return next(new AppError('Invalid credentials', 401));
     }
 
-    const isPasswordValid = await bcrypt.compare(password, (user as any).password_hash);
+    const isPasswordValid = await bcrypt.compare(password, user.password_hash!);
     if (!isPasswordValid) {
       return next(new AppError('Invalid credentials', 401));
     }
@@ -85,7 +85,7 @@ export const login = async (
     res.json({
       success: true,
       data: {
-        user: userWithoutPassword,
+        user: userWithoutPassword as User,
         token,
       },
       message: 'Login successful',
@@ -139,12 +139,12 @@ export const updatePassword = async (
       return next(new AppError('User not found', 404));
     }
 
-    const userWithPassword = await UserModel.findUserByEmail((user as any).email);
+    const userWithPassword = await UserModel.findUserByEmail(user.email);
     if (!userWithPassword) {
       return next(new AppError('User not found', 404));
     }
 
-    const isPasswordValid = await bcrypt.compare(currentPassword, (userWithPassword as any).password_hash);
+    const isPasswordValid = await bcrypt.compare(currentPassword, userWithPassword.password_hash!);
     if (!isPasswordValid) {
       return next(new AppError('Current password is incorrect', 401));
     }

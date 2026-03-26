@@ -38,8 +38,24 @@ const mockResponse = (url: string, params?: any): any => {
     };
   }
 
+  if (url.startsWith('/api/videos/') && url.endsWith('/ai-prompt')) {
+    // Mock AI prompt generation
+    return {
+      success: true,
+      data: {
+        prompt: 'Sample prompt for this video',
+        prompts: [
+          'Sample prompt for Sora',
+          'Sample prompt for Runway',
+          'Sample prompt for Pika',
+          '中文示例提示词',
+        ],
+      },
+    };
+  }
+
   if (url.startsWith('/api/videos/')) {
-    const id = parseInt(url.split('/').pop() || '');
+    const id = parseInt(url.split('/')[2]);
     const video = demoVideos.find(v => v.id === id);
     return {
       success: true,

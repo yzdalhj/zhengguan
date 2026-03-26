@@ -314,7 +314,7 @@ export const updateVideo = async (
 
     res.json({
       success: true,
-      data: await VideoModel.getVideoById(id),
+      data: await VideoModel.getVideoById(id) as Video | undefined,
       message: 'Video updated successfully',
     });
   } catch (error) {
@@ -361,7 +361,7 @@ export const createVideo = async (
 
     res.status(201).json({
       success: true,
-      data: await VideoModel.getVideoById(video.id),
+      data: await VideoModel.getVideoById(video.id) as Video | undefined,
       message: 'Video created successfully',
     });
   } catch (error) {

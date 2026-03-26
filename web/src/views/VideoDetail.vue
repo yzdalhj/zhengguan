@@ -59,6 +59,45 @@
         </div>
       </div>
 
+      <!-- AI 提示词生成 -->
+      <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold">🤖 AI 提示词生成</h2>
+            <button
+              @click="generateAIPrompt"
+              :disabled="generatingPrompt"
+              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+            >
+              {{ generatingPrompt ? '生成中...' : '生成提示词' }}
+            </button>
+          </div>
+          <div v-if="aiPrompts.length > 0" class="space-y-4">
+            <div v-for="(prompt, index) in aiPrompts" :key="index" class="relative">
+              <div class="mb-1 text-sm font-medium text-gray-600">
+                {{ getPromptName(index) }}
+              </div>
+              <div class="relative">
+                <textarea
+                  :value="prompt"
+                  readonly
+                  class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm h-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                ></textarea>
+                <button
+                  @click="copyPrompt(prompt)"
+                  class="absolute top-2 right-2 px-2 py-1 bg-white border border-gray-300 rounded text-xs hover:bg-gray-50"
+                >
+                  复制
+                </button>
+              </div>
+            </div>
+          </div>
+          <div v-else class="text-gray-500 text-center py-8">
+            点击上方按钮生成适配不同 AI 视频生成平台的提示词
+          </div>
+        </div>
+      </div>
+
       <div class="mt-8" v-if="relatedVideos.length > 0">
         <h2 class="text-2xl font-bold mb-4">相关推荐</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -123,8 +162,47 @@ const reportModalOpen = ref(false);
 const reportReason = ref('');
 const submitting = ref(false);
 const isCollected = ref(false);
+const generatingPrompt = ref(false);
+const aiPrompts = ref<string[]>([]);
 
 const isAuthenticated = computed(() => userStore.isAuthenticated);
+
+const getPromptName = (index: number): string => {
+  const names = ['OpenAI Sora', 'Runway ML', 'Pika Labs', '中文详细提示词'];
+  return names[index] || `提示词 ${index + 1}`;
+};
+
+const generateAIPrompt = async () => {
+  if (!video.value) return;
+  
+  generatingPrompt.value = true;
+  try {
+    const response = await api.get(`/api/videos/${id}/ai-prompt`);
+    aiPrompts.value = response.data.prompts;
+  } catch (error) {
+    console.error('Failed to generate AI prompt:', error);
+    alert('生成失败，请重试');
+  } finally {
+    generatingPrompt.value = false;
+  }
+};
+
+const copyPrompt = async (prompt: string) => {
+  try {
+    await navigator.clipboard.writeText(prompt);
+    alert('已复制到剪贴板');
+  } catch (error) {
+    console.error('Failed to copy:', error);
+    // 降级方案
+    const textarea = document.createElement('textarea');
+    textarea.value = prompt;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    alert('已复制到剪贴板');
+  }
+};
 
 const embedUrl = computed(() => {
   if (!video.value) return '';

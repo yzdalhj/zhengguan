@@ -2,6 +2,7 @@ export interface User {
   id: number;
   username: string;
   email: string;
+  password_hash?: string;
   role: string;
   created_at: Date;
   updated_at: Date;
@@ -73,4 +74,10 @@ export interface ApiResponse<T> {
     total: number;
     totalPages: number;
   };
+  seo?: {
+    title: string;
+    description: string;
+    keywords?: string;
+  };
+  grouped?: Record<string, Tag[]>;
 }

@@ -172,3 +172,98 @@ const generateSEOMetadata = (videos: Video[]) => {
     },
   };
 };
+
+export const generateAIPrompt = async (
+  req: Request,
+  res: Response<ApiResponse<{ prompt: string; prompts: string[] }>>,
+  next: NextFunction
+) => {
+  try {
+    const videoId = parseInt(req.params.id);
+    if (isNaN(videoId)) {
+      return next(new AppError('Invalid video ID', 400));
+    }
+
+    const video = await VideoModel.getVideoById(videoId);
+    if (!video || video.status !== 'approved') {
+      return next(new AppError('Video not found', 404));
+    }
+
+    const tags = video.tags || [];
+    const actionTags = tags.filter(t => t.category === '动作风格').map(t => t.name);
+    const cameraTags = tags.filter(t => t.category === '镜头语言').map(t => t.name);
+    const sceneTags = tags.filter(t => t.category === '场景').map(t => t.name);
+    const moodTags = tags.filter(t => t.category === '情绪').map(t => t.name);
+    
+    // 生成不同风格的提示词
+    const prompts = generatePrompts(video, actionTags, cameraTags, sceneTags, moodTags);
+    
+    // 主提示词
+    const mainPrompt = prompts[0];
+
+    res.json({
+      success: true,
+      data: {
+        prompt: mainPrompt,
+        prompts: prompts,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const generatePrompts = (
+  video: Video,
+  actionTags: string[],
+  cameraTags: string[],
+  sceneTags: string[],
+  moodTags: string[]
+): string[] => {
+  const title = video.title;
+  const description = video.description || '';
+  
+  // 组合所有标签
+  const allTags = [...actionTags, ...cameraTags, ...sceneTags, ...moodTags];
+  const tagsText = allTags.join(', ');
+
+  // Sora 风格提示词
+  const soraPrompt = [
+    `${title || ''}`,
+    description,
+    tagsText,
+    'cinematic, high quality, 4k, 60fps',
+    'professional cinematography',
+  ].filter(Boolean).join('. ');
+
+  // Runway 风格提示词
+  const runwayPrompt = [
+    `Create a video: ${title || ''}`,
+    description,
+    `Style and techniques: ${tagsText}`,
+    'High quality video, smooth motion, cinematic lighting',
+    'Professional film production quality',
+  ].filter(Boolean).join('\n');
+
+  // Pika 风格提示词
+  const pikaPrompt = [
+    `${tagsText}`,
+    title,
+    description,
+    '--ar 16:9',
+    '--motion 2',
+  ].filter(Boolean).join(' ');
+
+  // 中文详细提示词（适合中文 AI 模型）
+  const chinesePrompt = [
+    `视频标题：${title}`,
+    description ? `描述：${description}` : null,
+    actionTags.length > 0 ? `动作风格：${actionTags.join('，')}` : null,
+    cameraTags.length > 0 ? `镜头语言：${cameraTags.join('，')}` : null,
+    sceneTags.length > 0 ? `场景：${sceneTags.join('，')}` : null,
+    moodTags.length > 0 ? `情绪氛围：${moodTags.join('，')}` : null,
+    '高质量电影级画质，流畅动作，专业影视拍摄',
+  ].filter(Boolean).join('\n');
+
+  return [soraPrompt, runwayPrompt, pikaPrompt, chinesePrompt];
+};

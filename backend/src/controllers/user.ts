@@ -28,7 +28,7 @@ export const getCollections = async (
 
     res.json({
       success: true,
-      data: collections.map(c => c.video as Collection['video']),
+      data: collections,
       pagination: {
         page,
         limit,
