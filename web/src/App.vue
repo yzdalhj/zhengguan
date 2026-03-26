@@ -1,10 +1,10 @@
 <template>
-  <div id="app">
+  <div id="app" class="min-h-screen bg-vintage-black text-vintage-cream film-grain">
     <Navbar />
-    <main class="min-h-screen">
+    <main class="pt-20">
       <router-view v-slot="{ Component }">
-        <transition name="fade" mode="out-in">
-          <component :key="route.path" :is="Component" />
+        <transition name="page" mode="out-in">
+          <component :is="Component" />
         </transition>
       </router-view>
     </main>
@@ -13,18 +13,33 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
-import Navbar from './components/Navbar.vue';
-import Footer from './components/Footer.vue';
-
-const route = useRoute();
+import Navbar from './components/Navbar.vue'
+import Footer from './components/Footer.vue'
 </script>
 
 <style>
+/* Page Transition */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+/* Fade Transition */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.2s ease;
+  transition: opacity 0.4s ease;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
