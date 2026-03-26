@@ -50,6 +50,11 @@ export default defineNuxtConfig({
     transpile: ['html2canvas'],
   },
   
+  // 开发服务器配置
+  devServer: {
+    port: 8080,
+  },
+
   // Nitro 配置
   nitro: {
     devProxy: {
