@@ -1,29 +1,33 @@
 {
-  "name": "reframe-web",
+  "name": "reframe-web-nuxt",
   "version": "1.0.0",
-  "description": "影视分镜参考库 - 前端Web界面",
+  "description": "影视分镜参考库 - Nuxt.js 重构版",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix"
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint . --fix"
   },
   "dependencies": {
-    "@vueuse/head": "^2.0.0",
+    "@pinia/nuxt": "^0.5.1",
     "axios": "^1.6.8",
     "html2canvas": "^1.4.1",
+    "nuxt": "^3.11.2",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.0.4",
+    "@nuxt/eslint": "^0.3.1",
+    "@nuxtjs/tailwindcss": "^6.11.4",
     "autoprefixer": "^10.4.19",
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.24.0",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.1",
-    "vite": "^5.2.8"
+    "typescript": "^5.4.5"
   }
 }
