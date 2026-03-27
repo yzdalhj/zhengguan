@@ -1,16 +1,22 @@
 <template>
-  <nav class="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a] border-b border-neutral-800">
-    <div class="flex items-center h-14 px-4">
+  <nav
+    class="fixed top-0 left-0 right-0 z-50 bg-(--bg-primary) border-b border-(--border-color)"
+    style="height: 56px;"
+  >
+    <div class="flex items-center h-full px-4">
       <!-- Logo -->
-      <NuxtLink to="/" class="flex items-center gap-2 flex-shrink-0 mr-8">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+      <NuxtLink to="/" class="flex items-center gap-2 shrink-0 mr-8">
+        <div
+          class="rounded-lg bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center"
+          style="width: 32px; height: 32px;"
+        >
           <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
           </svg>
         </div>
         <div class="hidden sm:flex flex-col">
-          <span class="text-white font-semibold text-lg leading-tight">帧观</span>
-          <span class="text-neutral-500 text-xs leading-tight">每一帧，都是灵感</span>
+          <span class="text-(--text-primary) font-semibold leading-tight" style="font-size: 16px;">帧观</span>
+          <span class="text-(--text-muted) leading-tight" style="font-size: 11px;">每一帧，都是灵感</span>
         </div>
       </NuxtLink>
 
@@ -22,14 +28,18 @@
             @keyup.enter="handleSearch"
             type="text"
             placeholder="搜索感兴趣的内容或作者"
-            class="w-full h-9 pl-10 pr-20 bg-neutral-900 border border-neutral-700 rounded-full text-sm text-white placeholder-neutral-500 focus:border-blue-500 focus:outline-none transition-colors"
+            class="w-full bg-(--bg-input) border border-(--border-color) rounded-full text-(--text-primary) placeholder-(--text-muted) focus:border-primary focus:outline-none transition-colors"
+            style="height: 36px; padding-left: 36px; padding-right: 72px; font-size: 13px;"
           />
-          <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
+          <UIcon
+            name="i-heroicons-magnifying-glass"
+            class="absolute top-1/2 -translate-y-1/2 text-(--text-muted)"
+            style="left: 12px; width: 16px; height: 16px;"
+          />
           <button
             @click="handleSearch"
-            class="absolute right-1 top-1/2 -translate-y-1/2 px-4 h-7 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-full transition-colors"
+            class="absolute top-1/2 -translate-y-1/2 bg-primary hover:bg-primary-hover text-white font-medium rounded-full transition-colors"
+            style="right: 4px; height: 28px; padding: 0 16px; font-size: 13px;"
           >
             搜索
           </button>
@@ -37,34 +47,45 @@
       </div>
 
       <!-- Right Side Actions -->
-      <div class="flex items-center gap-1 ml-4 flex-shrink-0">
+      <div class="flex items-center gap-1 ml-4 shrink-0">
         <!-- VIP -->
-        <button class="flex items-center gap-1.5 px-3 py-1.5 text-neutral-300 hover:text-white transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
-          </svg>
-          <span class="text-sm hidden md:block">会员</span>
+        <button class="flex items-center gap-1.5 px-3 py-1.5 text-(--text-secondary) hover:text-(--text-primary) transition-colors">
+          <UIcon name="i-heroicons-sparkles" style="width: 16px; height: 16px;" />
+          <span class="hidden md:block" style="font-size: 13px;">会员</span>
         </button>
 
         <!-- History -->
-        <button class="flex items-center gap-1.5 px-3 py-1.5 text-neutral-300 hover:text-white transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          <span class="text-sm hidden md:block">历史</span>
+        <button class="flex items-center gap-1.5 px-3 py-1.5 text-(--text-secondary) hover:text-(--text-primary) transition-colors">
+          <UIcon name="i-heroicons-clock" style="width: 16px; height: 16px;" />
+          <span class="hidden md:block" style="font-size: 13px;">历史</span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button
+          @click="toggleTheme"
+          class="flex items-center gap-1.5 px-3 py-1.5 text-(--text-secondary) hover:text-(--text-primary) transition-colors"
+          :title="isDark ? '切换到浅色模式' : '切换到深色模式'"
+        >
+          <UIcon
+            :name="isDark ? 'i-heroicons-sun' : 'i-heroicons-moon'"
+            style="width: 16px; height: 16px;"
+          />
+          <span class="hidden md:block" style="font-size: 13px;">{{ isDark ? '浅色' : '深色' }}</span>
         </button>
 
         <!-- Auth Buttons -->
         <template v-if="!userStore.isAuthenticated">
           <NuxtLink
             to="/login"
-            class="px-4 py-1.5 text-sm text-neutral-300 hover:text-white transition-colors"
+            class="px-4 py-1.5 text-(--text-secondary) hover:text-(--text-primary) transition-colors"
+            style="font-size: 13px;"
           >
             登录
           </NuxtLink>
           <NuxtLink
             to="/register"
-            class="px-4 py-1.5 text-sm bg-blue-600 hover:bg-blue-500 text-white rounded-full transition-colors"
+            class="px-4 py-1.5 bg-primary hover:bg-primary-hover text-white rounded-full transition-colors"
+            style="font-size: 13px;"
           >
             注册
           </NuxtLink>
@@ -75,9 +96,12 @@
           <div class="relative" ref="userMenuRef">
             <button
               @click="toggleUserMenu"
-              class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-neutral-800 transition-colors"
+              class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-(--bg-secondary) transition-colors"
             >
-              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-medium">
+              <div
+                class="rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-medium"
+                style="width: 32px; height: 32px; font-size: 13px;"
+              >
                 {{ userInitial }}
               </div>
             </button>
@@ -92,25 +116,24 @@
             >
               <div
                 v-if="showUserMenu"
-                class="absolute right-0 mt-2 w-48 bg-neutral-900 border border-neutral-800 rounded-xl py-2 shadow-elevated"
+                class="absolute right-0 mt-2 bg-(--bg-elevated) border border-(--border-color) rounded-xl py-2 shadow-elevated"
+                style="width: 160px;"
               >
                 <NuxtLink
                   to="/collections"
                   @click="showUserMenu = false"
-                  class="flex items-center gap-2 px-4 py-2 text-sm text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors"
+                  class="flex items-center gap-2 px-4 py-2 text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary) transition-colors"
+                  style="font-size: 13px;"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                  </svg>
+                  <UIcon name="i-heroicons-heart" style="width: 14px; height: 14px;" />
                   我的收藏
                 </NuxtLink>
                 <button
                   @click="handleLogout"
-                  class="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                  class="w-full flex items-center gap-2 px-4 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                  style="font-size: 13px;"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                  </svg>
+                  <UIcon name="i-heroicons-arrow-right-on-rectangle" style="width: 14px; height: 14px;" />
                   退出登录
                 </button>
               </div>
@@ -128,6 +151,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
+const { isDark, toggleTheme } = useColorTheme()
 
 const searchQuery = ref('')
 const showUserMenu = ref(false)

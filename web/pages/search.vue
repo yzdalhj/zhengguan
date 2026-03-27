@@ -2,8 +2,8 @@
   <div>
     <!-- Results Header -->
     <div class="p-4 lg:p-6 pb-2">
-      <h1 class="text-white text-lg font-medium">
-        搜索结果共 <span class="text-blue-400">{{ total }}</span> 个结果
+      <h1 class="text-(--text-primary) text-lg font-medium">
+        搜索结果共 <span class="text-primary">{{ total }}</span> 个结果
       </h1>
     </div>
 
@@ -21,14 +21,14 @@
     <!-- Loading State -->
     <div v-else-if="loading" class="p-4 lg:p-6 pt-2">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        <div v-for="i in 12" :key="i" class="bg-[#1a1a1a] rounded-xl overflow-hidden">
-          <div class="aspect-video bg-[#252525] animate-pulse"></div>
+        <div v-for="i in 12" :key="i" class="bg-(--bg-elevated) rounded-xl overflow-hidden">
+          <div class="aspect-video bg-(--bg-secondary) animate-pulse"></div>
           <div class="p-3 space-y-2">
-            <div class="h-4 bg-[#252525] rounded animate-pulse"></div>
-            <div class="h-3 bg-[#252525] rounded w-2/3 animate-pulse"></div>
+            <div class="h-4 bg-(--bg-secondary) rounded animate-pulse"></div>
+            <div class="h-3 bg-(--bg-secondary) rounded w-2/3 animate-pulse"></div>
             <div class="flex gap-2 pt-1">
-              <div class="h-3 w-16 bg-[#252525] rounded animate-pulse"></div>
-              <div class="h-3 w-12 bg-[#252525] rounded animate-pulse"></div>
+              <div class="h-3 w-16 bg-(--bg-secondary) rounded animate-pulse"></div>
+              <div class="h-3 w-12 bg-(--bg-secondary) rounded animate-pulse"></div>
             </div>
           </div>
         </div>
@@ -38,13 +38,11 @@
     <!-- Empty State -->
     <div v-else class="flex-1 flex items-center justify-center p-4 lg:p-6">
       <div class="text-center py-20">
-        <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-white/5 flex items-center justify-center">
-          <svg class="w-10 h-10 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
+        <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-(--bg-secondary) flex items-center justify-center">
+          <UIcon name="i-heroicons-magnifying-glass" class="w-10 h-10 text-(--text-muted)" />
         </div>
-        <h3 class="text-xl font-semibold text-white mb-2">未找到相关结果</h3>
-        <p class="text-gray-500 mb-6">尝试调整搜索词或筛选条件</p>
+        <h3 class="text-xl font-semibold text-(--text-primary) mb-2">未找到相关结果</h3>
+        <p class="text-(--text-secondary) mb-6">尝试调整搜索词或筛选条件</p>
       </div>
     </div>
 
@@ -56,8 +54,8 @@
         :class="[
           'px-3 py-2 text-sm rounded-lg transition-colors',
           currentPage === 1
-            ? 'text-gray-600 cursor-not-allowed'
-            : 'text-gray-400 hover:text-white hover:bg-white/5'
+            ? 'text-(--text-muted) cursor-not-allowed'
+            : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'
         ]"
       >
         首页
@@ -68,13 +66,11 @@
         :class="[
           'px-3 py-2 text-sm rounded-lg transition-colors',
           currentPage === 1
-            ? 'text-gray-600 cursor-not-allowed'
-            : 'text-gray-400 hover:text-white hover:bg-white/5'
+            ? 'text-(--text-muted) cursor-not-allowed'
+            : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'
         ]"
       >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-        </svg>
+        <UIcon name="i-heroicons-chevron-left" class="w-4 h-4" />
       </button>
 
       <div class="flex items-center gap-1">
@@ -85,8 +81,8 @@
           :class="[
             'w-9 h-9 text-sm font-medium rounded-lg transition-colors',
             currentPage === page
-              ? 'bg-blue-600 text-white'
-              : 'text-gray-400 hover:text-white hover:bg-white/5'
+              ? 'bg-primary text-white'
+              : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'
           ]"
         >
           {{ page }}
@@ -99,13 +95,11 @@
         :class="[
           'px-3 py-2 text-sm rounded-lg transition-colors',
           currentPage === totalPages
-            ? 'text-gray-600 cursor-not-allowed'
-            : 'text-gray-400 hover:text-white hover:bg-white/5'
+            ? 'text-(--text-muted) cursor-not-allowed'
+            : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'
         ]"
       >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
+        <UIcon name="i-heroicons-chevron-right" class="w-4 h-4" />
       </button>
       <button
         @click="goToPage(totalPages)"
@@ -113,8 +107,8 @@
         :class="[
           'px-3 py-2 text-sm rounded-lg transition-colors',
           currentPage === totalPages
-            ? 'text-gray-600 cursor-not-allowed'
-            : 'text-gray-400 hover:text-white hover:bg-white/5'
+            ? 'text-(--text-muted) cursor-not-allowed'
+            : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'
         ]"
       >
         尾页

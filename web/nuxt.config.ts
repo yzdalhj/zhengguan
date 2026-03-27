@@ -1,23 +1,36 @@
+import tailwindcss from '@tailwindcss/vite'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  compatibilityDate: '2026-03-27',
   devtools: { enabled: true },
-  
-  // 模块
   modules: [
-    '@nuxtjs/tailwindcss',
+    '@nuxt/ui',
     '@pinia/nuxt',
   ],
-  
-  // CSS
+  // 禁用 Nuxt UI 的字体功能
+  ui: {
+    fonts: false,
+  },
+  // 配置图标使用本地模式
+  icon: {
+    clientBundle: {
+      scan: true,
+      includeCustomCollections: true,
+    },
+  },
   css: ['~/assets/css/main.css'],
-  
+  vite: {
+    plugins: [
+      tailwindcss(),
+    ],
+  },
   // 运行时配置
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:3001/api',
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://111.231.134.242:44080/api',
     },
   },
-  
   // 应用配置
   app: {
     head: {
@@ -32,24 +45,20 @@ export default defineNuxtConfig({
       ],
     },
   },
-  
   // 路由配置
   router: {
     options: {
       scrollBehaviorType: 'smooth',
     },
   },
-  
   // TypeScript
   typescript: {
     typeCheck: false,
   },
-  
   // 构建配置
   build: {
     transpile: ['html2canvas'],
   },
-  
   // 开发服务器配置
   devServer: {
     port: 8080,
@@ -59,7 +68,7 @@ export default defineNuxtConfig({
   nitro: {
     devProxy: {
       '/api': {
-        target: 'http://localhost:3001/api',
+        target: 'http://111.231.134.242:44080/api',
         changeOrigin: true,
       },
     },

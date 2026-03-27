@@ -1,8 +1,11 @@
 <template>
   <div>
-    <!-- 视频网格 -->
-    <section class="p-4 lg:p-6">
-      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <!-- 视频网格 - 使用固定列数和间距 -->
+    <section style="padding: 20px;">
+      <div
+        class="grid gap-4"
+        style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));"
+      >
         <video-card
           v-for="video in displayVideos.slice(0, 8)"
           :key="video.id"
@@ -12,22 +15,27 @@
     </section>
 
     <!-- 品牌横幅 -->
-    <section class="px-4 lg:px-6 py-4">
-      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">
+    <section style="padding: 16px 20px;">
+      <div class="relative overflow-hidden rounded-2xl bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600">
         <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.05%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50"></div>
-        <div class="relative flex items-center justify-between px-8 py-6">
-          <div class="flex items-center gap-6">
-            <div class="w-16 h-16 rounded-xl bg-white/20 flex items-center justify-center">
-              <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-              </svg>
+        <div class="relative flex items-center justify-between px-6 py-5">
+          <div class="flex items-center gap-4">
+            <div
+              class="rounded-xl bg-white/20 flex items-center justify-center shrink-0"
+              style="width: 56px; height: 56px;"
+            >
+              <UIcon name="i-heroicons-cube" class="w-7 h-7 text-white" />
             </div>
-            <div>
-              <h3 class="text-xl font-bold text-white mb-1">观千帧而后识镜，阅百剑而后闻器</h3>
-              <p class="text-white/70 text-sm max-w-md">汇聚全球精选影视片段，从经典镜头到创意剪辑，为创作者提供无限灵感。探索、学习、创作，让每一帧都成为你的灵感源泉。</p>
+            <div class="min-w-0">
+              <h3 class="font-bold text-white mb-1" style="font-size: 16px;">观千帧而后识镜，阅百剑而后闻器</h3>
+              <p class="text-white/70 max-w-md" style="font-size: 13px;">汇聚全球精选影视片段，从经典镜头到创意剪辑，为创作者提供无限灵感。探索、学习、创作，让每一帧都成为你的灵感源泉。</p>
             </div>
           </div>
-          <NuxtLink to="/search" class="px-6 py-2.5 bg-white text-blue-600 font-medium rounded-lg hover:bg-white/90 transition-colors text-sm whitespace-nowrap">
+          <NuxtLink
+            to="/search"
+            class="bg-white text-(--color-primary) font-medium rounded-lg hover:bg-white/90 transition-colors whitespace-nowrap shrink-0"
+            style="padding: 10px 20px; font-size: 13px;"
+          >
             探索更多灵感
           </NuxtLink>
         </div>
@@ -35,8 +43,11 @@
     </section>
 
     <!-- 更多视频 -->
-    <section class="p-4 lg:p-6">
-      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <section style="padding: 20px;">
+      <div
+        class="grid gap-4"
+        style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));"
+      >
         <video-card
           v-for="video in displayVideos.slice(8, 16)"
           :key="video.id"
@@ -46,12 +57,13 @@
     </section>
 
     <!-- 分页 -->
-    <section class="px-4 lg:px-6 py-6">
+    <section style="padding: 20px;">
       <div class="flex items-center justify-center gap-2">
         <button
           @click="handlePageChange(1)"
           :disabled="currentPage === 1"
-          class="px-3 py-1.5 text-sm text-neutral-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          class="px-3 py-1.5 text-(--text-secondary) hover:text-(--text-primary) disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          style="font-size: 13px;"
         >
           首页
         </button>
@@ -59,15 +71,17 @@
           v-for="page in displayedPages"
           :key="page"
           @click="handlePageChange(page)"
-          class="w-8 h-8 rounded-lg text-sm font-medium transition-colors"
-          :class="currentPage === page ? 'bg-blue-600 text-white' : 'text-neutral-400 hover:text-white hover:bg-neutral-800'"
+          class="rounded-lg font-medium transition-colors"
+          style="width: 32px; height: 32px; font-size: 13px;"
+          :class="currentPage === page ? 'bg-(--color-primary) text-white' : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'"
         >
           {{ page }}
         </button>
         <button
           @click="handlePageChange(totalPages)"
           :disabled="currentPage === totalPages"
-          class="px-3 py-1.5 text-sm text-neutral-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          class="px-3 py-1.5 text-(--text-secondary) hover:text-(--text-primary) disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          style="font-size: 13px;"
         >
           尾页
         </button>
@@ -159,17 +173,16 @@ function generateMockVideos(): Video[] {
     '游戏评测', '调色师', '短片制作', 'AI实验室', '电商学院'
   ]
 
-  return Array.from({ length: 20 }, (_, i) => ({
+  return Array.from({ length: 20 }, (_, i): Video => ({
     id: i + 1,
-    title: mockTitles[i % mockTitles.length],
+    title: mockTitles[i % mockTitles.length]!,
     description: '精彩视频内容描述...',
     thumbnail_url: `https://picsum.photos/400/225?random=${i + 1}`,
-    video_url: '',
     platform: ['bilibili', 'youtube'][i % 2] as 'bilibili' | 'youtube',
     duration: Math.floor(Math.random() * 600) + 60,
     views: Math.floor(Math.random() * 1000000),
     likes: Math.floor(Math.random() * 50000),
-    author: mockAuthors[i % mockAuthors.length],
+    author: mockAuthors[i % mockAuthors.length]!,
     source_film: '',
     tags: [
       { id: 1, name: '教程', category: '类型' },

@@ -1,20 +1,20 @@
 <template>
   <div class="container mx-auto px-4 py-6">
-    <h1 class="text-3xl font-bold mb-6">我的收藏</h1>
+    <h1 class="text-3xl font-bold mb-6 text-(--text-primary)">我的收藏</h1>
 
     <div v-if="!isAuthenticated" class="text-center py-20">
-      <p class="text-gray-500 mb-4">请登录后查看收藏</p>
-      <NuxtLink to="/login" class="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary/90">
+      <p class="text-(--text-secondary) mb-4">请登录后查看收藏</p>
+      <NuxtLink to="/login" class="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary-hover">
         去登录
       </NuxtLink>
     </div>
 
     <template v-else>
-      <div v-if="loading && collections.length === 0" class="text-center py-10">
+      <div v-if="loading && collections.length === 0" class="text-center py-10 text-(--text-secondary)">
         加载中...
       </div>
 
-      <div v-if="!loading && collections.length === 0" class="text-center py-20 text-gray-500">
+      <div v-if="!loading && collections.length === 0" class="text-center py-20 text-(--text-secondary)">
         暂无收藏
       </div>
 
@@ -23,7 +23,7 @@
       </div>
 
       <div v-if="hasMore" class="text-center mt-8">
-        <button @click="loadMore" :disabled="loading" class="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary/90 disabled:opacity-50">
+        <button @click="loadMore" :disabled="loading" class="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary-hover disabled:opacity-50">
           {{ loading ? '加载中...' : '加载更多' }}
         </button>
       </div>
@@ -32,7 +32,7 @@
         <a href="/api/user/collections/export" target="_blank" class="text-primary hover:underline">
           导出收藏(JSON)
         </a>
-        <span class="text-gray-300">|</span>
+        <span class="text-(--border-color)">|</span>
         <button @click="openExportStoryboardModal" class="text-primary hover:underline">
           导出分镜板(图片)
         </button>
@@ -40,22 +40,22 @@
 
       <!-- 分镜板导出弹窗 -->
       <div v-if="storyboardModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-          <h3 class="text-xl font-bold mb-4">导出分镜板</h3>
+        <div class="bg-(--bg-elevated) rounded-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-(--border-color)">
+          <h3 class="text-xl font-bold mb-4 text-(--text-primary)">导出分镜板</h3>
           
           <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2">分镜标题</label>
+            <label class="block text-sm font-medium text-(--text-secondary) mb-2">分镜标题</label>
             <input
               v-model="storyboardTitle"
               type="text"
               placeholder="请输入分镜板标题"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md"
+              class="w-full px-3 py-2 bg-(--bg-input) border border-(--border-color) rounded-md text-(--text-primary)"
             />
           </div>
 
           <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2">布局</label>
-            <div class="flex gap-4">
+            <label class="block text-sm font-medium text-(--text-secondary) mb-2">布局</label>
+            <div class="flex gap-4 text-(--text-primary)">
               <label class="flex items-center">
                 <input
                   v-model="storyboardLayout"
@@ -77,15 +77,15 @@
             </div>
           </div>
 
-          <div class="mb-6 bg-gray-50 p-4 rounded-md">
-            <p class="text-sm text-gray-600">
+          <div class="mb-6 bg-(--bg-secondary) p-4 rounded-md">
+            <p class="text-sm text-(--text-secondary)">
               分镜板将包含所有收藏的视频缩略图和标题，可以直接保存为图片使用。
             </p>
           </div>
 
           <div 
             id="storyboard-preview" 
-            class="border rounded-lg p-4 mb-4 bg-white max-h-[50vh] overflow-y-auto"
+            class="border border-(--border-color) rounded-lg p-4 mb-4 bg-(--bg-primary) max-h-[50vh] overflow-y-auto"
           >
             <div ref="storyboardContainer" class="storyboard-content" :class="storyboardLayout">
               <h1 class="storyboard-title">{{ storyboardTitle || '分镜板' }}</h1>
@@ -96,21 +96,21 @@
               >
                 <div class="storyboard-thumbnail">
                   <img v-if="collection.video?.thumbnail_url" :src="collection.video.thumbnail_url" :alt="collection.video.title" />
-                  <div v-else class="bg-gray-200 flex items-center justify-center text-gray-400 w-full h-full">
+                  <div v-else class="bg-(--bg-secondary) flex items-center justify-center text-(--text-muted) w-full h-full">
                     无预览
                   </div>
                   <div class="storyboard-number">{{ index + 1 }}</div>
                 </div>
                 <div class="storyboard-info">
                   <h4>{{ collection.video?.title }}</h4>
-                  <p v-if="collection.video?.description" class="text-gray-600 text-sm">
+                  <p v-if="collection.video?.description" class="text-(--text-secondary) text-sm">
                     {{ collection.video.description }}
                   </p>
                   <div v-if="collection.video?.tags" class="flex flex-wrap gap-1 mt-2">
                     <span 
                       v-for="tag in collection.video.tags.slice(0, 5)" 
                       :key="tag.id"
-                      class="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full"
+                      class="text-xs px-2 py-0.5 bg-(--bg-secondary) text-(--text-secondary) rounded-full"
                     >
                       {{ tag.name }}
                     </span>
@@ -121,10 +121,10 @@
           </div>
 
           <div class="flex gap-2 justify-end">
-            <button @click="storyboardModalOpen = false" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200">
+            <button @click="storyboardModalOpen = false" class="px-4 py-2 bg-(--bg-secondary) text-(--text-secondary) rounded-md hover:bg-(--bg-tertiary)">
               取消
             </button>
-            <button @click="generateStoryboardImage" :disabled="generatingStoryboard" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50">
+            <button @click="generateStoryboardImage" :disabled="generatingStoryboard" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover disabled:opacity-50">
               {{ generatingStoryboard ? '生成中...' : '生成图片并下载' }}
             </button>
           </div>
