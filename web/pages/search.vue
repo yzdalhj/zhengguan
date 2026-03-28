@@ -39,7 +39,7 @@
     <div v-else class="flex-1 flex items-center justify-center p-4 lg:p-6">
       <div class="text-center py-20">
         <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-(--bg-secondary) flex items-center justify-center">
-          <UIcon name="i-heroicons-magnifying-glass" class="w-10 h-10 text-(--text-muted)" />
+          <dynamic-icon name="search" size="40px" />
         </div>
         <h3 class="text-xl font-semibold text-(--text-primary) mb-2">未找到相关结果</h3>
         <p class="text-(--text-secondary) mb-6">尝试调整搜索词或筛选条件</p>
@@ -70,7 +70,7 @@
             : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'
         ]"
       >
-        <UIcon name="i-heroicons-chevron-left" class="w-4 h-4" />
+        <dynamic-icon name="chevron-left" size="16px" />
       </button>
 
       <div class="flex items-center gap-1">
@@ -99,7 +99,7 @@
             : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'
         ]"
       >
-        <UIcon name="i-heroicons-chevron-right" class="w-4 h-4" />
+        <dynamic-icon name="chevron-right" size="16px" />
       </button>
       <button
         @click="goToPage(totalPages)"

@@ -11,10 +11,11 @@
         :alt="video.title"
         class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         loading="lazy"
+        decoding="async"
         @error="handleImageError"
       />
       <div v-else class="w-full h-full flex items-center justify-center bg-linear-to-br from-(--bg-elevated) to-(--bg-secondary)">
-        <UIcon name="i-heroicons-play-circle" class="w-12 h-12 text-(--text-muted)" />
+        <dynamic-icon name="play-circle" size="48px" />
       </div>
 
       <!-- Duration Badge -->
@@ -24,15 +25,15 @@
 
       <!-- Platform Badge -->
       <div v-if="video.platform" class="absolute top-2 left-2 px-2 py-0.5 bg-black/60 backdrop-blur-sm rounded text-xs text-white/90 font-medium flex items-center gap-1">
-        <UIcon v-if="video.platform === 'bilibili'" name="i-simple-icons-bilibili" class="w-3 h-3" />
-        <UIcon v-else-if="video.platform === 'youtube'" name="i-simple-icons-youtube" class="w-3 h-3" />
+        <dynamic-icon v-if="video.platform === 'bilibili'" name="logo-bilibili" size="12px" />
+        <dynamic-icon v-else-if="video.platform === 'youtube'" name="logo-youtube" size="12px" />
         <span class="capitalize">{{ video.platform }}</span>
       </div>
 
       <!-- Hover Overlay -->
       <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
         <div class="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center transform scale-75 group-hover:scale-100 transition-transform duration-200">
-          <UIcon name="i-heroicons-play" class="w-6 h-6 text-(--text-primary) ml-0.5" />
+          <dynamic-icon name="play" size="24px" />
         </div>
       </div>
     </div>

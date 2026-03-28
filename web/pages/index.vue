@@ -1,58 +1,51 @@
 <template>
   <div>
-    <!-- 视频网格 - 使用固定列数和间距 -->
-    <section style="padding: 20px;">
+    <!-- 视频网格 - 统一展示所有视频，横幅作为卡片插入 -->
+    <section ref="videoSection" style="padding: 20px;">
       <div
         class="grid gap-4"
         style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));"
       >
-        <video-card
-          v-for="video in displayVideos.slice(0, 8)"
-          :key="video.id"
-          :video="video"
-        />
-      </div>
-    </section>
-
-    <!-- 品牌横幅 -->
-    <section style="padding: 16px 20px;">
-      <div class="relative overflow-hidden rounded-2xl bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600">
-        <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.05%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50"></div>
-        <div class="relative flex items-center justify-between px-6 py-5">
-          <div class="flex items-center gap-4">
-            <div
-              class="rounded-xl bg-white/20 flex items-center justify-center shrink-0"
-              style="width: 56px; height: 56px;"
+        <template v-for="video in videosWithBanner" :key="video.id">
+          <!-- 横幅卡片 -->
+          <div
+            v-if="(video as any).isBanner"
+            class="group/banner relative overflow-hidden rounded-xl bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600"
+            style="grid-column: 1 / -1;"
+          >
+            <!-- 关闭按钮 - 右上角，鼠标进入横幅显示 -->
+            <button
+              @click="closeBanner"
+              class="absolute top-3 right-3 z-50 flex items-center justify-center w-8 h-8 rounded-full bg-white/20 hover:bg-white/40 text-white opacity-0 group-hover/banner:opacity-100 transition-all duration-200 backdrop-blur-sm border border-white/30"
+              title="关闭"
             >
-              <UIcon name="i-heroicons-cube" class="w-7 h-7 text-white" />
-            </div>
-            <div class="min-w-0">
-              <h3 class="font-bold text-white mb-1" style="font-size: 16px;">观千帧而后识镜，阅百剑而后闻器</h3>
-              <p class="text-white/70 max-w-md" style="font-size: 13px;">汇聚全球精选影视片段，从经典镜头到创意剪辑，为创作者提供无限灵感。探索、学习、创作，让每一帧都成为你的灵感源泉。</p>
+              <dynamic-icon name="close" size="16px" />
+            </button>
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.05%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50"></div>
+            <div class="relative flex items-center justify-between px-6 py-5">
+              <div class="flex items-center gap-4">
+                <div
+                  class="rounded-xl bg-white/20 flex items-center justify-center shrink-0"
+                  style="width: 56px; height: 56px;"
+                >
+                  <dynamic-icon name="app" size="28px" style="color: white;" />
+                </div>
+                <div class="min-w-0 p-12px">
+                  <h3 class="font-bold text-white mb-1" style="font-size: 16px;">观千帧而后识镜，阅百剑而后闻器</h3>
+                  <p class="text-white/70" style="font-size: 13px;">汇聚全球精选影视片段，从经典镜头到创意剪辑，为创作者提供无限灵感。探索、学习、创作，让每一帧都成为你的灵感源泉。</p>
+                </div>
+              </div>
+              <NuxtLink
+                to="/search"
+                class="bg-white text-primary font-medium rounded-lg hover:bg-white/90 transition-colors whitespace-nowrap shrink-0"
+                style="padding: 10px 20px; font-size: 13px;"
+              >
+                探索更多灵感
+              </NuxtLink>
             </div>
           </div>
-          <NuxtLink
-            to="/search"
-            class="bg-white text-(--color-primary) font-medium rounded-lg hover:bg-white/90 transition-colors whitespace-nowrap shrink-0"
-            style="padding: 10px 20px; font-size: 13px;"
-          >
-            探索更多灵感
-          </NuxtLink>
-        </div>
-      </div>
-    </section>
-
-    <!-- 更多视频 -->
-    <section style="padding: 20px;">
-      <div
-        class="grid gap-4"
-        style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));"
-      >
-        <video-card
-          v-for="video in displayVideos.slice(8, 16)"
-          :key="video.id"
-          :video="video"
-        />
+          <video-card v-else :video="video" />
+        </template>
       </div>
     </section>
 
@@ -73,7 +66,7 @@
           @click="handlePageChange(page)"
           class="rounded-lg font-medium transition-colors"
           style="width: 32px; height: 32px; font-size: 13px;"
-          :class="currentPage === page ? 'bg-(--color-primary) text-white' : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'"
+          :class="currentPage === page ? 'bg-primary text-white' : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'"
         >
           {{ page }}
         </button>
@@ -91,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { Video } from '~/types'
 
 // SEO
@@ -102,13 +95,84 @@ useHead({
   ]
 })
 
-const videoStore = useVideoStore()
+const { $api } = useNuxtApp()
+const userStore = useUserStore()
+const videoSection = ref<HTMLElement | null>(null)
+const columnCount = ref(4)
 
+// 使用 SSR 获取首屏数据 - 关键优化点
+const { data: videosData, refresh: refreshVideos } = await useAsyncData(
+  'videos-page-1',
+  async () => {
+    const response = await $api.get('/videos', {
+      params: { page: 1, limit: 20 }
+    })
+    return response.data
+  },
+  {
+    server: true,
+    default: () => []
+  }
+)
+
+// 获取标签数据
+const { data: tagsData } = await useAsyncData(
+  'tags',
+  async () => {
+    const response = await $api.get('/tags')
+    return response.data
+  },
+  {
+    server: true,
+    default: () => []
+  }
+)
+
+// 本地状态管理
+const videos = ref<Video[]>(videosData.value || [])
 const currentPage = ref(1)
-const totalPages = ref(7)
+const totalPages = ref(1)
+const total = ref(0)
 
-// 使用 store 中的视频数据
-const videos = computed(() => videoStore.videos)
+// 初始化分页信息
+if (videosData.value && videosData.value.length > 0) {
+  // 从响应头或默认设置中获取分页信息
+  totalPages.value = Math.ceil(100 / 20) // 假设默认值，实际应该从API返回
+  total.value = 100
+}
+
+// 计算当前列数
+const updateColumnCount = () => {
+  if (!videoSection.value) return
+  const width = videoSection.value.clientWidth
+  columnCount.value = Math.floor((width - 40) / 296) // 280px + 16px gap
+}
+
+// 插入横幅后的视频列表
+const videosWithBanner = computed(() => {
+  const result: (Video & { isBanner?: boolean })[] = []
+  
+  // 如果用户关闭了横幅，不显示
+  if (userStore.bannerClosed) {
+    return videos.value
+  }
+  
+  const bannerPosition = columnCount.value * 2 // 第2行末尾
+
+  videos.value.forEach((video, index) => {
+    if (index === bannerPosition) {
+      result.push({ id: -1, isBanner: true } as any)
+    }
+    result.push(video)
+  })
+
+  return result
+})
+
+// 关闭横幅
+const closeBanner = () => {
+  userStore.closeBanner()
+}
 
 // 分页显示逻辑
 const displayedPages = computed(() => {
@@ -127,74 +191,29 @@ const displayedPages = computed(() => {
   return pages
 })
 
-// 显示的视频数据 - 优先使用 API 数据，如果没有则使用模拟数据
-const displayVideos = computed(() => {
-  if (videos.value && videos.value.length > 0) {
-    return videos.value
-  }
-  // 使用模拟数据作为后备
-  return generateMockVideos()
-})
-
 // 处理页码变化
 const handlePageChange = async (page: number) => {
+  if (page === currentPage.value) return
+  
+  const response = await $api.get('/videos', {
+    params: { page, limit: 20 }
+  })
+  
+  videos.value = response.data || []
   currentPage.value = page
-  await videoStore.fetchVideos(page)
-  // 滚动到顶部
+  total.value = response.pagination?.total || 0
+  totalPages.value = response.pagination?.totalPages || 0
+  
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-function generateMockVideos(): Video[] {
-  const mockTitles = [
-    'Blender 油画风格渲染秘籍',
-    '摄影师前期拍摄入门教程',
-    '2023史诗力作 AI大电影',
-    'Blender 4.0 新功能详解',
-    '一天出片 三维广告不是梦',
-    'SPIDER-MAN 2 游戏评测',
-    '秋日氛围感视频调色教程',
-    'HELLO 创意短片制作',
-    'AIGC 落地实战案例分享',
-    '电商短视频拍摄流程',
-    'Blender 中国龙建模教程',
-    '最美的夜 跨年晚会集锦',
-    '实用模型资源推荐',
-    '包装设计入门到精通',
-    '人像摄影布光技巧',
-    '材质分析方法详解',
-    '层次设计原理与应用',
-    '空间感知与构图技巧',
-    '动画制作全流程解析',
-    '剪辑节奏把控秘诀'
-  ]
+// 客户端初始化
+onMounted(() => {
+  updateColumnCount()
+  window.addEventListener('resize', updateColumnCount)
+})
 
-  const mockAuthors = [
-    '创意工作室', '影视学院', '设计达人', '技术分享', '教程频道',
-    '游戏评测', '调色师', '短片制作', 'AI实验室', '电商学院'
-  ]
-
-  return Array.from({ length: 20 }, (_, i): Video => ({
-    id: i + 1,
-    title: mockTitles[i % mockTitles.length]!,
-    description: '精彩视频内容描述...',
-    thumbnail_url: `https://picsum.photos/400/225?random=${i + 1}`,
-    platform: ['bilibili', 'youtube'][i % 2] as 'bilibili' | 'youtube',
-    duration: Math.floor(Math.random() * 600) + 60,
-    views: Math.floor(Math.random() * 1000000),
-    likes: Math.floor(Math.random() * 50000),
-    author: mockAuthors[i % mockAuthors.length]!,
-    source_film: '',
-    tags: [
-      { id: 1, name: '教程', category: '类型' },
-      { id: 2, name: 'Blender', category: '软件' }
-    ],
-    created_at: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
-    updated_at: new Date().toISOString()
-  }))
-}
-
-onMounted(async () => {
-  await videoStore.fetchTags()
-  await videoStore.fetchVideos(1)
+onUnmounted(() => {
+  window.removeEventListener('resize', updateColumnCount)
 })
 </script>

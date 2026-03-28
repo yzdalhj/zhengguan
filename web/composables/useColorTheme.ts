@@ -1,7 +1,17 @@
 type ColorTheme = 'dark' | 'light'
 
 export function useColorTheme() {
-  const colorTheme = useState<ColorTheme>('color-theme', () => 'dark')
+  // 从客户端插件已经设置好的 class 推断初始主题
+  const getInitialTheme = (): ColorTheme => {
+    if (import.meta.client) {
+      // 检查 document 上已有的主题 class
+      if (document.documentElement.classList.contains('dark')) return 'dark'
+      if (document.documentElement.classList.contains('light')) return 'light'
+    }
+    return 'dark'
+  }
+
+  const colorTheme = useState<ColorTheme>('color-theme', getInitialTheme)
 
   const isDark = computed(() => colorTheme.value === 'dark')
   const isLight = computed(() => colorTheme.value === 'light')
@@ -23,23 +33,11 @@ export function useColorTheme() {
     }
   }
 
-  const initTheme = () => {
-    if (import.meta.client) {
-      const savedTheme = localStorage.getItem('color-theme') as ColorTheme | null
-      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light')
-      setTheme(initialTheme)
-    }
-  }
-
+  // 监听主题变化并保存到 localStorage
   watch(colorTheme, (newTheme) => {
     if (import.meta.client) {
       localStorage.setItem('color-theme', newTheme)
     }
-  })
-
-  onMounted(() => {
-    initTheme()
   })
 
   return {

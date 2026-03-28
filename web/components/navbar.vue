@@ -31,11 +31,7 @@
             class="w-full bg-(--bg-input) border border-(--border-color) rounded-full text-(--text-primary) placeholder-(--text-muted) focus:border-primary focus:outline-none transition-colors"
             style="height: 36px; padding-left: 36px; padding-right: 72px; font-size: 13px;"
           />
-          <UIcon
-            name="i-heroicons-magnifying-glass"
-            class="absolute top-1/2 -translate-y-1/2 text-(--text-muted)"
-            style="left: 12px; width: 16px; height: 16px;"
-          />
+          <dynamic-icon name="search" size="16px" class="absolute left-3 top-1/2 -translate-y-1/2 text-(--text-muted)" />
           <button
             @click="handleSearch"
             class="absolute top-1/2 -translate-y-1/2 bg-primary hover:bg-primary-hover text-white font-medium rounded-full transition-colors"
@@ -48,30 +44,28 @@
 
       <!-- Right Side Actions -->
       <div class="flex items-center gap-1 ml-4 shrink-0">
-        <!-- VIP -->
-        <button class="flex items-center gap-1.5 px-3 py-1.5 text-(--text-secondary) hover:text-(--text-primary) transition-colors">
-          <UIcon name="i-heroicons-sparkles" style="width: 16px; height: 16px;" />
-          <span class="hidden md:block" style="font-size: 13px;">会员</span>
-        </button>
-
-        <!-- History -->
-        <button class="flex items-center gap-1.5 px-3 py-1.5 text-(--text-secondary) hover:text-(--text-primary) transition-colors">
-          <UIcon name="i-heroicons-clock" style="width: 16px; height: 16px;" />
-          <span class="hidden md:block" style="font-size: 13px;">历史</span>
-        </button>
-
         <!-- Theme Toggle -->
         <button
           @click="toggleTheme"
           class="flex items-center gap-1.5 px-3 py-1.5 text-(--text-secondary) hover:text-(--text-primary) transition-colors"
           :title="isDark ? '切换到浅色模式' : '切换到深色模式'"
         >
-          <UIcon
-            :name="isDark ? 'i-heroicons-sun' : 'i-heroicons-moon'"
-            style="width: 16px; height: 16px;"
-          />
+          <dynamic-icon :name="isDark ? 'sunny' : 'moon'" size="16px" />
           <span class="hidden md:block" style="font-size: 13px;">{{ isDark ? '浅色' : '深色' }}</span>
         </button>
+
+        <!-- VIP -->
+        <!-- <button class="flex items-center gap-1.5 px-3 py-1.5 text-(--text-secondary) hover:text-(--text-primary) transition-colors">
+          <dynamic-icon name="star" size="16px" />
+          <span class="hidden md:block" style="font-size: 13px;">会员</span>
+        </button> -->
+
+        <!-- History -->
+        <button class="flex items-center gap-1.5 px-3 py-1.5 text-(--text-secondary) hover:text-(--text-primary) transition-colors">
+          <dynamic-icon name="time" size="20px" />
+          <span class="hidden md:block" style="font-size: 13px;">历史</span>
+        </button>
+ 
 
         <!-- Auth Buttons -->
         <template v-if="!userStore.isAuthenticated">
@@ -125,7 +119,7 @@
                   class="flex items-center gap-2 px-4 py-2 text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary) transition-colors"
                   style="font-size: 13px;"
                 >
-                  <UIcon name="i-heroicons-heart" style="width: 14px; height: 14px;" />
+                  <dynamic-icon name="heart" size="20px" />
                   我的收藏
                 </NuxtLink>
                 <button
@@ -133,7 +127,7 @@
                   class="w-full flex items-center gap-2 px-4 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
                   style="font-size: 13px;"
                 >
-                  <UIcon name="i-heroicons-arrow-right-on-rectangle" style="width: 14px; height: 14px;" />
+                  <dynamic-icon name="logout" size="14px" />
                   退出登录
                 </button>
               </div>

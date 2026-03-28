@@ -14,6 +14,7 @@ export interface Video {
   title: string
   description?: string
   embed_url?: string
+  external_url?: string
   thumbnail_url?: string
   duration?: number
   quality?: string

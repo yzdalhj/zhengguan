@@ -1,75 +1,169 @@
 <template>
-  <div class="min-h-screen bg-(--bg-primary)">
-    <!-- Navbar -->
-    <navbar />
+  <t-layout class="min-h-screen">
+    <!-- Header / Navbar -->
+    <t-header>
+      <navbar />
+    </t-header>
 
-    <div class="flex" style="padding-top: 56px;">
-      <!-- Sidebar Navigation - 固定宽度，不随浏览器缩放变化 -->
-      <aside
-        class="fixed left-0 bottom-0 bg-(--bg-primary) border-r border-(--border-color) overflow-y-auto z-40 hidden md:block"
-        style="width: 200px; top: 56px;"
-      >
-        <nav class="py-3">
+    <t-layout>
+      <t-aside>
+        <t-menu
+          v-model="activeMenu"
+          theme="light"
+          :collapsed="false"
+          width="200px"
+          class="h-full"
+          @change="handleMenuChange"
+        >
           <!-- 首页推荐 -->
-          <NuxtLink
-            to="/"
-            class="flex items-center justify-center md:justify-start gap-3 px-3 py-2 mx-2 rounded-lg text-[13px] font-medium transition-colors whitespace-nowrap"
-            :class="$route.path === '/' 
-              ? 'bg-(--bg-tertiary) text-(--text-primary)' 
-              : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'"
-          >
-            <UIcon name="i-heroicons-home" class="w-18px h-18px shrink-0" />
-            <span class="hidden xl:block">首页推荐</span>
-          </NuxtLink>
+          <t-menu-item value="/">
+            <template #icon>
+              <dynamic-icon name="home" />
+            </template>
+            首页推荐
+          </t-menu-item>
 
-          <!-- 分类列表 -->
-          <div class="mt-1 space-y-0.5">
-            <NuxtLink
-              v-for="category in categories"
-              :key="category.name"
-              :to="category.link"
-              class="flex items-center justify-center md:justify-start gap-3 px-3 py-2 mx-2 rounded-lg text-[13px] transition-colors whitespace-nowrap"
-              :class="$route.query.category === category.name || $route.query.tag === category.name 
-                ? 'bg-(--bg-tertiary) text-(--text-primary)' 
-                : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'"
+          <!-- 观看历史 -->
+          <t-menu-item value="/history">
+            <template #icon>
+              <dynamic-icon name="time" />
+            </template>
+            观看历史
+          </t-menu-item>
+
+          <!-- 分类分组 -->
+          <t-submenu value="categories" title="分类">
+            <template #icon>
+              <dynamic-icon name="view-list" />
+            </template>
+            <t-menu-item
+              v-for="category in categoryItems"
+              :key="category.value"
+              :value="category.value"
             >
-              <UIcon :name="category.icon" class="w-18px h-18px shrink-0" />
-              <span class="hidden xl:block">{{ category.name }}</span>
-            </NuxtLink>
-          </div>
-        </nav>
-      </aside>
+              {{ category.label }}
+            </t-menu-item>
+          </t-submenu>
 
-      <!-- Main Content - 固定左边距 -->
-      <main
-        class="flex-1 min-h-screen bg-(--bg-primary)"
-        style="margin-left: 200px;"
-      >
-        <slot />
+          <!-- 标签分组 -->
+          <t-submenu value="tags" title="标签">
+            <template #icon>
+              <dynamic-icon name="tag" />
+            </template>
+            <t-menu-item
+              v-for="tag in tagItems"
+              :key="tag.value"
+              :value="tag.value"
+            >
+              {{ tag.label }}
+            </t-menu-item>
+          </t-submenu>
+        </t-menu>
+      </t-aside>
 
-        <!-- Footer -->
-        <main-footer />
-      </main>
-    </div>
-  </div>
+      <t-layout>
+        <t-content>
+          <slot />
+        </t-content>
+        <Suspense>
+          <main-footer />
+          <template #fallback>
+            <div class="h-16 bg-(--bg-secondary)" />
+          </template>
+        </Suspense>
+      </t-layout>
+    </t-layout>
+  </t-layout>
 </template>
 
 <script setup lang="ts">
-// 使用 Iconify Heroicons 图标
-// 图标映射：name -> iconify name
-const categories = [
-  { name: '动作风格', link: '/search?category=动作风格', icon: 'i-heroicons-bolt' },
-  { name: '镜头语言', link: '/search?category=镜头语言', icon: 'i-heroicons-video-camera' },
-  { name: '场景', link: '/search?category=场景', icon: 'i-heroicons-photo' },
-  { name: '情绪', link: '/search?category=情绪', icon: 'i-heroicons-face-smile' },
-  { name: '参考用途', link: '/search?category=参考用途', icon: 'i-heroicons-bookmark' },
-  { name: '打斗', link: '/search?tag=打斗', icon: 'i-heroicons-fire' },
-  { name: '追逐', link: '/search?tag=追逐', icon: 'i-heroicons-bolt' },
-  { name: '特写', link: '/search?tag=特写', icon: 'i-heroicons-magnifying-glass-plus' },
-  { name: '一镜到底', link: '/search?tag=一镜到底', icon: 'i-heroicons-video-camera' },
-  { name: '慢动作', link: '/search?tag=慢动作', icon: 'i-heroicons-clock' },
-  { name: '转场', link: '/search?tag=转场', icon: 'i-heroicons-arrows-right-left' },
-  { name: '构图', link: '/search?tag=构图', icon: 'i-heroicons-squares-2x2' },
-  { name: '光影', link: '/search?tag=光影', icon: 'i-heroicons-sun' },
+const route = useRoute()
+
+// 计算当前激活的菜单项
+const activeMenu = computed(() => {
+  const path = route.path
+  if (path === '/') return '/'
+  if (path === '/history') return '/history'
+
+  // 检查是否在分类或标签中
+  const category = route.query.category as string
+  const tag = route.query.tag as string
+  if (category) return `/search?category=${category}`
+  if (tag) return `/search?tag=${tag}`
+
+  return path
+})
+
+// 分类列表
+const categoryItems = [
+  { label: '动作风格', value: '/search?category=动作风格' },
+  { label: '镜头语言', value: '/search?category=镜头语言' },
+  { label: '场景', value: '/search?category=场景' },
+  { label: '情绪', value: '/search?category=情绪' },
+  { label: '参考用途', value: '/search?category=参考用途' },
 ]
+
+// 标签列表
+const tagItems = [
+  { label: '打斗', value: '/search?tag=打斗' },
+  { label: '追逐', value: '/search?tag=追逐' },
+  { label: '特写', value: '/search?tag=特写' },
+  { label: '一镜到底', value: '/search?tag=一镜到底' },
+  { label: '慢动作', value: '/search?tag=慢动作' },
+  { label: '转场', value: '/search?tag=转场' },
+  { label: '构图', value: '/search?tag=构图' },
+  { label: '光影', value: '/search?tag=光影' },
+]
+
+// 处理菜单切换
+const handleMenuChange = (value: any) => {
+  navigateTo(value)
+}
 </script>
+
+<style scoped>
+:deep(.t-menu) {
+  background: transparent;
+}
+
+:deep(.t-menu__item) {
+  color: var(--text-secondary);
+}
+
+:deep(.t-menu__item.t-is-active) {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+:deep(.t-menu__item:hover:not(.t-is-active)) {
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+}
+
+:deep(.t-submenu__title) {
+  color: var(--text-secondary);
+}
+
+:deep(.t-submenu__title:hover) {
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+}
+
+/* 隐藏侧边栏滚动条但保持滚动功能 */
+t-aside::-webkit-scrollbar {
+  width: 4px;
+}
+
+t-aside::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+t-aside::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 2px;
+}
+
+t-aside::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+</style>

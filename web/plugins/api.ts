@@ -1,6 +1,6 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios'
 
-interface ApiResponse<T = any> {
+export interface ApiResponse<T = any> {
   success: boolean
   data: T
   message?: string
@@ -13,7 +13,7 @@ interface ApiResponse<T = any> {
   }
 }
 
-class ApiClient {
+export class ApiClient {
   private client: AxiosInstance
 
   constructor() {
@@ -30,6 +30,9 @@ class ApiClient {
     // Request interceptor
     this.client.interceptors.request.use(
       (config) => {
+        // 打印请求日志
+        console.log(`[API Request] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`)
+        
         // Add auth token if available
         if (process.client) {
           const token = localStorage.getItem('token')

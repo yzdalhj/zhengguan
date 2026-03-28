@@ -5,6 +5,7 @@ interface UserState {
   user: User | null
   token: string | null
   loading: boolean
+  bannerClosed: boolean
 }
 
 export const useUserStore = defineStore('user', {
@@ -12,6 +13,7 @@ export const useUserStore = defineStore('user', {
     user: null,
     token: null,
     loading: false,
+    bannerClosed: false,
   }),
 
   getters: {
@@ -105,6 +107,18 @@ export const useUserStore = defineStore('user', {
           this.token = token
           this.getMe()
         }
+        const bannerClosed = localStorage.getItem('bannerClosed')
+        if (bannerClosed) {
+          this.bannerClosed = bannerClosed === 'true'
+        }
+      }
+    },
+
+    // 关闭横幅
+    closeBanner() {
+      this.bannerClosed = true
+      if (process.client) {
+        localStorage.setItem('bannerClosed', 'true')
       }
     }
   },
