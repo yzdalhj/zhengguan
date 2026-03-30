@@ -2,11 +2,61 @@ export interface User {
   id: number;
   username: string;
   email: string;
+  phone?: string;
+  phone_verified?: boolean;
   password_hash?: string;
   role: string;
+  points: number;
+  level: string;
+  level_expires_at?: Date;
+  total_points_earned: number;
   created_at: Date;
   updated_at: Date;
 }
+
+export interface SmsCode {
+  id: number;
+  phone: string;
+  code: string;
+  purpose: string;
+  created_at: Date;
+  expires_at: Date;
+  used: boolean;
+}
+
+export interface RefreshToken {
+  id: number;
+  user_id: number;
+  token: string;
+  user_agent?: string;
+  ip_address?: string;
+  created_at: Date;
+  expires_at: Date;
+  revoked: boolean;
+}
+
+export interface QrcodeLogin {
+  id: number;
+  code: string;
+  user_id?: number;
+  status: string;
+  created_at: Date;
+  expires_at: Date;
+  scanned_at?: Date;
+  confirmed_at?: Date;
+}
+
+export interface UserPointsHistory {
+  id: number;
+  user_id: number;
+  points_change: number;
+  points_balance: number;
+  reason: string;
+  description?: string;
+  created_at: Date;
+}
+
+export type LoginType = 'password' | 'sms' | 'qrcode';
 
 export interface Video {
   id: number;

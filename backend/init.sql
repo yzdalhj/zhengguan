@@ -7,11 +7,80 @@ CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(20) UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
+    phone_verified BOOLEAN DEFAULT FALSE,
     role VARCHAR(20) DEFAULT 'user', -- user/admin
+    -- 会员积分相关字段
+    points INTEGER DEFAULT 0, -- 用户积分
+    level VARCHAR(20) DEFAULT 'normal', -- 会员等级: normal/vip/svip
+    level_expires_at TIMESTAMP, -- 会员等级过期时间
+    total_points_earned INTEGER DEFAULT 0, -- 累计获得积分
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
+
+-- 创建短信验证码表
+CREATE TABLE sms_codes (
+    id SERIAL PRIMARY KEY,
+    phone VARCHAR(20) NOT NULL,
+    code VARCHAR(6) NOT NULL,
+    purpose VARCHAR(20) NOT NULL, -- login, register, reset_password
+    created_at TIMESTAMP DEFAULT NOW(),
+    expires_at TIMESTAMP NOT NULL,
+    used BOOLEAN DEFAULT FALSE
+);
+
+-- 索引：按手机号查询，按过期时间清理
+CREATE INDEX idx_sms_codes_phone ON sms_codes(phone);
+CREATE INDEX idx_sms_codes_expires ON sms_codes(expires_at);
+
+-- 创建刷新令牌表
+CREATE TABLE refresh_tokens (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    token VARCHAR(255) NOT NULL UNIQUE,
+    user_agent TEXT,
+    ip_address VARCHAR(45),
+    created_at TIMESTAMP DEFAULT NOW(),
+    expires_at TIMESTAMP NOT NULL,
+    revoked BOOLEAN DEFAULT FALSE
+);
+
+-- 索引：按用户查询，按过期时间清理
+CREATE INDEX idx_refresh_tokens_user_id ON refresh_tokens(user_id);
+CREATE INDEX idx_refresh_tokens_expires ON refresh_tokens(expires_at);
+
+-- 创建扫码登录状态表
+CREATE TABLE qrcode_login (
+    id SERIAL PRIMARY KEY,
+    code VARCHAR(64) NOT NULL UNIQUE,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    status VARCHAR(20) NOT NULL DEFAULT 'pending', -- pending, scanned, expired, cancelled
+    created_at TIMESTAMP DEFAULT NOW(),
+    expires_at TIMESTAMP NOT NULL,
+    scanned_at TIMESTAMP,
+    confirmed_at TIMESTAMP
+);
+
+-- 索引：按码查询，按过期时间清理
+CREATE INDEX idx_qrcode_login_code ON qrcode_login(code);
+CREATE INDEX idx_qrcode_login_expires ON qrcode_login(expires_at);
+
+-- 创建用户积分变动记录表
+CREATE TABLE user_points_history (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    points_change INTEGER NOT NULL, -- 积分变化（正数增加，负数减少）
+    points_balance INTEGER NOT NULL, -- 变动后积分余额
+    reason VARCHAR(50) NOT NULL, -- 变动原因: collect_video, watch_video, redeem, admin_adjust
+    description TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- 索引：按用户查询
+CREATE INDEX idx_user_points_history_user_id ON user_points_history(user_id);
+CREATE INDEX idx_user_points_history_created ON user_points_history(created_at);
 
 -- 创建视频表
 CREATE TABLE videos (

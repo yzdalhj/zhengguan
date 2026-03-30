@@ -47,7 +47,12 @@ export const useVideoStore = defineStore('video', {
         const params: any = {
           page,
           limit: 20,
-          ...this.filters,
+          keyword: this.filters.keyword || undefined,
+          tags: this.filters.selectedTags.length > 0 ? this.filters.selectedTags : undefined,
+          min_duration: this.filters.minDuration,
+          max_duration: this.filters.maxDuration,
+          platform: this.filters.platform,
+          sort: this.filters.sort,
         }
 
         if (this.filters.selectedTags.length === 0) {
@@ -122,7 +127,12 @@ export const useVideoStore = defineStore('video', {
         const params: any = {
           page: nextPage,
           limit: 20,
-          ...this.filters,
+          keyword: this.filters.keyword || undefined,
+          tags: this.filters.selectedTags.length > 0 ? this.filters.selectedTags : undefined,
+          min_duration: this.filters.minDuration,
+          max_duration: this.filters.maxDuration,
+          platform: this.filters.platform,
+          sort: this.filters.sort,
         }
         
         if (this.filters.selectedTags.length === 0) {

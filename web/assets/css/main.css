@@ -5,9 +5,6 @@
   --color-primary-hover: #2563eb;
 }
 
-/* TDesign 按需导入基础样式 */
-@import 'tdesign-vue-next/es/style/index.css';
-
 :root {
   --bg-primary: #ffffff;
   --bg-secondary: #f5f5f5;

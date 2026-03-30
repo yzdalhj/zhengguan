@@ -1,11 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import { verifyToken } from '../utils/jwt';
 import { AppError } from './errorHandler';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const JWT_SECRET = process.env.JWT_SECRET || 'default_secret';
+import type { JwtPayload } from '../utils/jwt';
 
 export interface AuthRequest extends Request {
   user?: {
@@ -23,22 +19,35 @@ export const authenticate = (
   const authHeader = req.headers.authorization;
   
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return next(new AppError('No token provided', 401));
+    req.user = undefined;
+    return next();
   }
   
   const token = authHeader.split(' ')[1];
+  const decoded = verifyToken(token);
   
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+  if (decoded) {
     req.user = {
       id: decoded.id,
       username: decoded.username,
       role: decoded.role,
     };
-    next();
-  } catch (error) {
-    next(new AppError('Invalid token', 401));
+  } else {
+    req.user = undefined;
   }
+  
+  next();
+};
+
+export const requireUser = (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.user) {
+    return next(new AppError('Authentication required', 401));
+  }
+  next();
 };
 
 export const requireAdmin = (

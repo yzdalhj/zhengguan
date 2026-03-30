@@ -1,7 +1,4 @@
 import tailwindcss from '@tailwindcss/vite'
-import Icons from 'unplugin-icons/vite'
-import IconsResolver from 'unplugin-icons/resolver'
-import Components from 'unplugin-vue-components/vite'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -9,7 +6,7 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   modules: [
     '@pinia/nuxt',
-    '@tdesign-vue-next/nuxt',
+    '@nuxt/icon',
   ],
   css: [
     '~/assets/css/main.css',
@@ -17,32 +14,19 @@ export default defineNuxtConfig({
   vite: {
     plugins: [
       tailwindcss(),
-      // 自动导入图标组件
-      Components({
-        resolvers: [
-          IconsResolver({
-            prefix: 'icon',
-          }),
-        ],
-      }),
-      // 图标插件
-      Icons({
-        autoInstall: true,
-      }),
     ],
     build: {
       chunkSizeWarningLimit: 1000,
       rollupOptions: {
         output: {
           manualChunks: {
-            'tdesign': ['tdesign-vue-next'],
             'vendor': ['vue', 'vue-router', 'pinia'],
           },
         },
       },
     },
     optimizeDeps: {
-      include: ['tdesign-vue-next', 'axios'],
+      include: ['axios'],
     },
   },
   // 运行时配置
@@ -100,7 +84,7 @@ export default defineNuxtConfig({
   },
   // 构建配置
   build: {
-    transpile: ['html2canvas', 'tdesign-vue-next'],
+    transpile: ['html2canvas'],
   },
   // 开发服务器配置
   devServer: {

@@ -1,91 +1,73 @@
 <template>
-  <t-layout class="min-h-screen">
+  <div class="flex flex-col min-h-screen bg-(--bg-primary)">
     <!-- Header / Navbar -->
-    <t-header>
+    <header class="h-14 shrink-0">
       <navbar />
-    </t-header>
+    </header>
 
-    <t-layout>
-      <t-aside>
-        <t-menu
-          v-model="activeMenu"
-          theme="light"
-          :collapsed="false"
-          width="200px"
-          class="h-full"
-          @change="handleMenuChange"
-        >
+    <div class="flex flex-1">
+      <aside class="fixed top-14 left-0 w-56 h-[calc(100vh-3.5rem)] shrink-0 border-r border-(--border-color) overflow-y-auto bg-(--bg-primary) backdrop-blur-sm z-10">
+        <nav class="py-4 px-2">
           <!-- 首页推荐 -->
-          <t-menu-item value="/">
-            <template #icon>
-              <dynamic-icon name="home" />
-            </template>
-            首页推荐
-          </t-menu-item>
+          <button
+            @click="handleMenuChange('/')"
+            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 cursor-pointer mb-1"
+            :class="activeMenu === '/' ? 'text-white bg-(--primary) hover:bg-(--primary-hover) shadow-sm shadow-(--primary)/20' : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'"
+          >
+            <Icon name="heroicons:home" class="w-5 h-5" />
+            <span class="text-sm font-medium">首页推荐</span>
+          </button>
 
           <!-- 观看历史 -->
-          <t-menu-item value="/history">
-            <template #icon>
-              <dynamic-icon name="time" />
-            </template>
-            观看历史
-          </t-menu-item>
+          <button
+            @click="handleMenuChange('/history')"
+            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 cursor-pointer mb-1"
+            :class="activeMenu === '/history' ? 'text-white bg-(--primary) hover:bg-(--primary-hover) shadow-sm shadow-(--primary)/20' : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'"
+          >
+            <Icon name="heroicons:clock" class="w-5 h-5" />
+            <span class="text-sm font-medium">观看历史</span>
+          </button>
 
-          <!-- 分类分组 -->
-          <t-submenu value="categories" title="分类">
-            <template #icon>
-              <dynamic-icon name="view-list" />
-            </template>
-            <t-menu-item
-              v-for="category in categoryItems"
-              :key="category.value"
-              :value="category.value"
-            >
-              {{ category.label }}
-            </t-menu-item>
-          </t-submenu>
+          <!-- 分隔线 -->
+          <div class="my-3 mx-3 h-px bg-(--border-color)"></div>
 
-          <!-- 标签分组 -->
-          <t-submenu value="tags" title="标签">
-            <template #icon>
-              <dynamic-icon name="tag" />
-            </template>
-            <t-menu-item
-              v-for="tag in tagItems"
-              :key="tag.value"
-              :value="tag.value"
-            >
-              {{ tag.label }}
-            </t-menu-item>
-          </t-submenu>
-        </t-menu>
-      </t-aside>
+          <!-- 分类 -->
+          <button
+            v-for="category in categoryItems"
+            :key="category.value"
+            @click="handleMenuChange(category.value)"
+            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 cursor-pointer mb-1"
+            :class="activeMenu === category.value ? 'text-white bg-(--primary) hover:bg-(--primary-hover) shadow-sm shadow-(--primary)/20' : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'"
+          >
+            <Icon :name="category.icon" class="w-5 h-5" />
+            <span class="text-sm font-medium">{{ category.label }}</span>
+          </button>
+        </nav>
+      </aside>
 
-      <t-layout>
-        <t-content>
+      <main class="flex-1 flex flex-col bg-(--bg-secondary) ml-56">
+        <div class="flex-1">
           <slot />
-        </t-content>
+        </div>
         <Suspense>
           <main-footer />
           <template #fallback>
-            <div class="h-16 bg-(--bg-secondary)" />
+            <div class="h-16 bg-(--bg-tertiary)" />
           </template>
         </Suspense>
-      </t-layout>
-    </t-layout>
-  </t-layout>
+      </main>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 const route = useRoute()
 
-// 计算当前激活的菜单项
 const activeMenu = computed(() => {
   const path = route.path
   if (path === '/') return '/'
   if (path === '/history') return '/history'
 
-  // 检查是否在分类或标签中
   const category = route.query.category as string
   const tag = route.query.tag as string
   if (category) return `/search?category=${category}`
@@ -94,76 +76,42 @@ const activeMenu = computed(() => {
   return path
 })
 
-// 分类列表
 const categoryItems = [
-  { label: '动作风格', value: '/search?category=动作风格' },
-  { label: '镜头语言', value: '/search?category=镜头语言' },
-  { label: '场景', value: '/search?category=场景' },
-  { label: '情绪', value: '/search?category=情绪' },
-  { label: '参考用途', value: '/search?category=参考用途' },
+  { label: '动作风格', value: '/search?category=动作风格', icon: 'heroicons:sparkles' },
+  { label: '镜头语言', value: '/search?category=镜头语言', icon: 'heroicons:video-camera' },
+  { label: '场景', value: '/search?category=场景', icon: 'heroicons:map-pin' },
+  { label: '情绪', value: '/search?category=情绪', icon: 'heroicons:face-smile' },
+  { label: '参考用途', value: '/search?category=参考用途', icon: 'heroicons:question-mark-circle' },
+  { label: '打斗', value: '/search?category=打斗', icon: 'heroicons:shield-exclamation' },
+  { label: '追逐', value: '/search?category=追逐', icon: 'heroicons:arrow-trending-up' },
+  { label: '特写', value: '/search?category=特写', icon: 'heroicons:magnifying-glass' },
+  { label: '一镜到底', value: '/search?category=一镜到底', icon: 'heroicons:play-circle' },
+  { label: '慢动作', value: '/search?category=慢动作', icon: 'heroicons:clock' },
+  { label: '转场', value: '/search?category=转场', icon: 'heroicons:arrows-right-left' },
+  { label: '构图', value: '/search?category=构图', icon: 'heroicons:photo' },
+  { label: '光影', value: '/search?category=光影', icon: 'heroicons:sun' },
 ]
 
-// 标签列表
-const tagItems = [
-  { label: '打斗', value: '/search?tag=打斗' },
-  { label: '追逐', value: '/search?tag=追逐' },
-  { label: '特写', value: '/search?tag=特写' },
-  { label: '一镜到底', value: '/search?tag=一镜到底' },
-  { label: '慢动作', value: '/search?tag=慢动作' },
-  { label: '转场', value: '/search?tag=转场' },
-  { label: '构图', value: '/search?tag=构图' },
-  { label: '光影', value: '/search?tag=光影' },
-]
-
-// 处理菜单切换
-const handleMenuChange = (value: any) => {
+const handleMenuChange = (value: string) => {
   navigateTo(value)
 }
 </script>
 
 <style scoped>
-:deep(.t-menu) {
-  background: transparent;
-}
-
-:deep(.t-menu__item) {
-  color: var(--text-secondary);
-}
-
-:deep(.t-menu__item.t-is-active) {
-  color: var(--text-primary);
-  background: var(--bg-tertiary);
-}
-
-:deep(.t-menu__item:hover:not(.t-is-active)) {
-  color: var(--text-primary);
-  background: var(--bg-secondary);
-}
-
-:deep(.t-submenu__title) {
-  color: var(--text-secondary);
-}
-
-:deep(.t-submenu__title:hover) {
-  color: var(--text-primary);
-  background: var(--bg-secondary);
-}
-
-/* 隐藏侧边栏滚动条但保持滚动功能 */
-t-aside::-webkit-scrollbar {
+aside::-webkit-scrollbar {
   width: 4px;
 }
 
-t-aside::-webkit-scrollbar-track {
+aside::-webkit-scrollbar-track {
   background: transparent;
 }
 
-t-aside::-webkit-scrollbar-thumb {
+aside::-webkit-scrollbar-thumb {
   background: var(--border-color);
   border-radius: 2px;
 }
 
-t-aside::-webkit-scrollbar-thumb:hover {
+aside::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
 }
 </style>

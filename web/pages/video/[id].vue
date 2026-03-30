@@ -6,16 +6,16 @@
       <!-- 平台来源标识栏 -->
       <div class="flex items-center justify-between mb-3">
         <div class="flex items-center gap-2">
-          <dynamic-icon 
+          <Icon 
             v-if="video.platform === 'bilibili'" 
-            name="logo-bilibili" 
-            size="20px"
+            name="simple-icons:bilibili" 
+            class="w-5 h-5"
             style="color: #00A1D6;"
           />
-          <dynamic-icon 
+          <Icon 
             v-else-if="video.platform === 'youtube'" 
-            name="logo-youtube" 
-            size="20px"
+            name="simple-icons:youtube" 
+            class="w-5 h-5"
             style="color: #FF0000;"
           />
           <span class="text-sm text-(--text-secondary)">
@@ -33,7 +33,7 @@
             : 'text-[#FF0000] hover:bg-[#FF0000]/10'"
         >
           <span>在 {{ video.platform === 'bilibili' ? 'B站' : 'YouTube' }} 打开</span>
-          <dynamic-icon name="jump" size="16px" />
+          <Icon name="heroicons:arrow-top-right-on-square" class="w-4 h-4" />
         </a>
       </div>
 
@@ -53,7 +53,7 @@
       <!-- 版权声明 -->
       <div class="mb-6 p-4 bg-(--bg-secondary) rounded-lg border border-(--border-color)">
         <div class="flex items-start gap-3">
-          <dynamic-icon name="info-circle" size="20px" />
+          <Icon name="heroicons:information-circle" class="w-5 h-5" />
           <div>
             <p class="text-sm text-(--text-secondary)">
               <span class="font-medium text-(--text-primary)">版权说明：</span>
@@ -76,15 +76,15 @@
             <h1 class="text-2xl md:text-3xl font-bold text-(--text-primary)">{{ video.title }}</h1>
             <button
               v-if="isAuthenticated"
-              @click="toggleCollection"
+              @click="toggleCollection(videoId)"
               :class="[
                 'px-4 py-2 rounded-md transition-colors flex items-center gap-2',
                 isCollected
                   ? 'bg-red-100 text-red-600 hover:bg-red-200'
-                  : 'bg-(--color-primary) text-white hover:bg-(--color-primary-hover)'
+                  : 'bg-primary text-white hover:bg-primary-hover'
               ]"
             >
-              <dynamic-icon :name="isCollected ? 'heart' : 'heart-filled'" size="20px" />
+              <Icon :name="isCollected ? 'heroicons:heart' : 'heroicons:heart-solid'" class="w-5 h-5" />
               {{ isCollected ? '已收藏' : '收藏' }}
             </button>
           </div>
@@ -111,19 +111,19 @@
 
           <div class="flex items-center gap-6 text-sm text-(--text-muted) border-t border-(--border-color) pt-4">
             <span class="flex items-center gap-1">
-              <dynamic-icon name="browse" size="16px" />
+              <Icon name="heroicons:eye" class="w-4 h-4" />
               {{ formatNumber(video.views) }} 观看
             </span>
             <span class="flex items-center gap-1">
-              <dynamic-icon name="thumb-up" size="16px" />
+              <Icon name="heroicons:thumb-up" class="w-4 h-4" />
               {{ formatNumber(video.likes) }} 点赞
             </span>
             <span v-if="video.duration" class="flex items-center gap-1">
-              <dynamic-icon name="time" size="20px" />
+              <Icon name="heroicons:clock" class="w-5 h-5" />
               {{ formatDuration(video.duration) }}
             </span>
             <span v-if="video.author" class="flex items-center gap-1">
-              <dynamic-icon name="user" size="16px" />
+              <Icon name="heroicons:user" class="w-4 h-4" />
               {{ video.author }}
             </span>
           </div>
@@ -138,9 +138,9 @@
             <button
               @click="generateAIPrompt"
               :disabled="generatingPrompt"
-              class="px-4 py-2 bg-(--color-primary) text-white rounded-md hover:bg-(--color-primary-hover) disabled:opacity-50 flex items-center gap-2"
+              class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover disabled:opacity-50 flex items-center gap-2"
             >
-              <dynamic-icon name="star" size="16px" />
+              <Icon name="heroicons:sparkles" class="w-4 h-4" />
               {{ generatingPrompt ? '生成中...' : '生成提示词' }}
             </button>
           </div>
@@ -153,20 +153,20 @@
                 <textarea
                   :value="prompt"
                   readonly
-                  class="w-full px-3 py-2 bg-(--bg-secondary) border border-(--border-color) rounded-md text-sm h-32 text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-(--color-primary) resize-none"
+                  class="w-full px-3 py-2 bg-(--bg-secondary) border border-(--border-color) rounded-md text-sm h-32 text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                 ></textarea>
                 <button
                   @click="copyPrompt(prompt)"
                   class="absolute top-2 right-2 px-2 py-1 bg-(--bg-elevated) border border-(--border-color) rounded text-xs text-(--text-secondary) hover:bg-(--bg-secondary) flex items-center gap-1"
                 >
-                  <dynamic-icon name="copy" size="12px" />
+                  <Icon name="heroicons:document-duplicate" class="w-3 h-3" />
                   复制
                 </button>
               </div>
             </div>
           </div>
           <div v-else class="text-(--text-muted) text-center py-8">
-            <dynamic-icon name="star" size="16px" />
+            <Icon name="heroicons:sparkles" class="w-4 h-4 inline" />
             <p>点击上方按钮生成适配不同 AI 视频生成平台的提示词</p>
           </div>
         </div>
@@ -183,12 +183,12 @@
 
     <!-- 视频不存在 -->
     <div v-else class="text-center py-20">
-      <dynamic-icon name="video-off" size="64px" />
+      <Icon name="heroicons:video-camera-slash" class="w-16 h-16 mx-auto text-(--text-muted) mb-4" />
       <h3 class="text-xl font-medium text-(--text-primary) mb-2">视频不存在</h3>
       <p class="text-(--text-secondary) mb-6">该视频可能已被删除或下架</p>
       <NuxtLink
         to="/"
-        class="px-6 py-2 bg-(--color-primary) hover:bg-(--color-primary-hover) text-white rounded-lg transition-colors"
+        class="px-6 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors"
       >
         返回首页
       </NuxtLink>
@@ -240,7 +240,8 @@ import type { Video } from '~/types'
 
 const route = useRoute()
 const router = useRouter()
-const { isAuthenticated } = useAuth()
+const userStore = useUserStore()
+const isAuthenticated = computed(() => userStore.isAuthenticated)
 const { isCollected, checkCollection, toggleCollection } = useCollection()
 
 const video = ref<Video | null>(null)
@@ -266,18 +267,7 @@ const videoId = computed(() => Number(route.params.id))
 
 const embedUrl = computed(() => {
   if (!video.value) return ''
-  if (video.value.platform === 'bilibili') {
-    const bvid = video.value.external_url?.match(/BV[a-zA-Z0-9]+/)?.[0]
-    if (bvid) {
-      return `https://player.bilibili.com/player.html?bvid=${bvid}&page=1&high_quality=1&danmaku=0`
-    }
-  } else if (video.value.platform === 'youtube') {
-    const videoId = video.value.external_url?.match(/[?&]v=([^&]+)/)?.[1]
-    if (videoId) {
-      return `https://www.youtube.com/embed/${videoId}`
-    }
-  }
-  return ''
+  return video.value.embed_url || ''
 })
 
 const formatNumber = (num: number): string => {
@@ -314,13 +304,10 @@ const generateAIPrompt = async () => {
   generatingPrompt.value = true
   try {
     const { $api } = useNuxtApp()
-    const res = await $api('/ai/generate-prompt', {
-      method: 'POST',
-      body: {
-        video_id: video.value.id,
-      },
+    const res = await $api.post('/ai/generate-prompt', {
+      video_id: video.value.id,
     })
-    aiPrompts.value = res.prompts || []
+    aiPrompts.value = res.data?.prompts || []
   } catch (err) {
     console.error('生成提示词失败:', err)
   } finally {
@@ -337,12 +324,9 @@ const submitReport = async () => {
   submittingReport.value = true
   try {
     const { $api } = useNuxtApp()
-    await $api('/reports', {
-      method: 'POST',
-      body: {
-        video_id: video.value.id,
-        reason: selectedReportReason.value,
-      },
+    await $api.post('/reports', {
+      video_id: video.value.id,
+      reason: selectedReportReason.value,
     })
     reportModalOpen.value = false
     selectedReportReason.value = ''
@@ -358,15 +342,15 @@ const fetchVideo = async () => {
   loading.value = true
   try {
     const { $api } = useNuxtApp()
-    const res = await $api(`/videos/${videoId.value}`)
-    video.value = res
+    const res = await $api.get(`/videos/${videoId.value}`)
+    video.value = res.data
     // 检查收藏状态
     if (isAuthenticated.value) {
       checkCollection(videoId.value)
     }
     // 添加到观看历史
     const { addToHistory } = useWatchHistory()
-    addToHistory(res)
+    addToHistory(res.data)
   } catch (err) {
     console.error('获取视频失败:', err)
     video.value = null
@@ -379,13 +363,13 @@ const fetchRelatedVideos = async () => {
   if (!video.value) return
   try {
     const { $api } = useNuxtApp()
-    const res = await $api('/videos', {
-      query: {
+    const res = await $api.get('/videos', {
+      params: {
         tag: video.value.tags?.[0]?.name,
         limit: 6,
       },
     })
-    relatedVideos.value = res.videos?.filter((v: Video) => v.id !== video.value?.id) || []
+    relatedVideos.value = res.data?.videos?.filter((v: Video) => v.id !== video.value?.id) || []
   } catch (err) {
     console.error('获取相关视频失败:', err)
   }

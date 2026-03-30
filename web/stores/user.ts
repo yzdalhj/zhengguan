@@ -52,15 +52,30 @@ export const useUserStore = defineStore('user', {
       }
     },
 
-    async register(username: string, email: string, password: string) {
+    async loginByPhone(phone: string, password: string) {
       const { $api } = useNuxtApp()
       this.loading = true
       try {
-        const response = await $api.post('/auth/register', {
-          username,
-          email,
-          password,
-        })
+        const response = await $api.post('/auth/login/phone', { phone, password })
+        this.setToken(response.data.token)
+        this.user = response.data.user
+        return response
+      } catch (error) {
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async register(username: string, email: string, password: string, phone?: string) {
+      const { $api } = useNuxtApp()
+      this.loading = true
+      try {
+        const data: Record<string, string> = { username, email, password }
+        if (phone) {
+          data.phone = phone
+        }
+        const response = await $api.post('/auth/register', data)
         return response
       } catch (error) {
         throw error

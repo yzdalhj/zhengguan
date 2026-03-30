@@ -4,9 +4,24 @@
 
     <div v-if="!isAuthenticated" class="text-center py-20">
       <p class="text-(--text-secondary) mb-4">请登录后查看收藏</p>
-      <NuxtLink to="/login" class="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary-hover">
+      <button @click="openLoginDialog" class="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary-hover">
         去登录
-      </NuxtLink>
+      </button>
+
+      <UiDialog
+        v-model:model-value="showLoginDialog"
+        :title="loginMode === 'login' ? '登录' : '注册'"
+        size="xl"
+        :plain="true"
+        :show-close="true"
+      >
+        <LoginForm
+          :mode="loginMode"
+          @close="showLoginDialog = false"
+          @success="handleLoginSuccess"
+          @switch-mode="loginMode = loginMode === 'login' ? 'register' : 'login'"
+        />
+      </UiDialog>
     </div>
 
     <template v-else>
@@ -198,6 +213,19 @@ const currentPage = ref(1)
 const totalPages = ref(1)
 const hasMore = computed(() => currentPage.value < totalPages.value)
 const isAuthenticated = computed(() => userStore.isAuthenticated)
+
+const showLoginDialog = ref(false)
+const loginMode = ref<'login' | 'register'>('login')
+
+const openLoginDialog = () => {
+  loginMode.value = 'login'
+  showLoginDialog.value = true
+}
+
+const handleLoginSuccess = () => {
+  showLoginDialog.value = false
+  window.location.reload()
+}
 
 const loadMore = async () => {
   if (loading.value || !hasMore.value) return

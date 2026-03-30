@@ -119,6 +119,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, watch } from 'vue'
+import type { Tag } from '~/types'
 
 // SEO
 useHead({
@@ -165,16 +166,69 @@ const goToPage = (page: number) => {
 // Initialize from URL params
 onMounted(async () => {
   const keyword = route.query.keyword as string
+  const category = route.query.category as string
+  const tagName = route.query.tag as string
+
   if (keyword) {
     videoStore.setKeyword(keyword)
   }
+
+  if (category) {
+    await videoStore.fetchTags(category)
+  } else if (tagName) {
+    await videoStore.fetchTags()
+  } else {
+    await videoStore.fetchTags()
+  }
+
+  await applyUrlParamsToFilters()
   await videoStore.fetchVideos(1)
 })
 
-// Watch for route changes
-watch(() => route.query, (newQuery) => {
-  if (!newQuery.keyword) {
-    videoStore.setKeyword('')
+const applyUrlParamsToFilters = () => {
+  const category = route.query.category as string
+  const tagName = route.query.tag as string
+
+  if (category) {
+    const categoryTags = videoStore.tags.filter((tag: Tag) => tag.category === category)
+    categoryTags.forEach((tag: Tag) => {
+      if (!videoStore.filters.selectedTags.includes(tag.id)) {
+        videoStore.filters.selectedTags.push(tag.id)
+      }
+    })
   }
+
+  if (tagName) {
+    const tag = videoStore.tags.find((t: Tag) => t.name === tagName)
+    if (tag && !videoStore.filters.selectedTags.includes(tag.id)) {
+      videoStore.filters.selectedTags.push(tag.id)
+    }
+  }
+}
+
+// Watch for route changes
+watch(() => route.query, async (newQuery) => {
+  videoStore.clearFilters()
+
+  const keyword = newQuery.keyword as string
+  const category = newQuery.category as string
+  const tagName = newQuery.tag as string
+
+  if (keyword) {
+    videoStore.setKeyword(keyword)
+  }
+
+  if (category) {
+    if (videoStore.tags.length === 0 || videoStore.tags.some(t => t.category !== category)) {
+      await videoStore.fetchTags(category)
+    }
+  } else if (tagName) {
+    if (videoStore.tags.length === 0) {
+      await videoStore.fetchTags()
+    }
+  }
+
+  applyUrlParamsToFilters()
+  await videoStore.fetchVideos(1)
 }, { deep: true })
 </script>

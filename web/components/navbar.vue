@@ -69,20 +69,35 @@
 
         <!-- Auth Buttons -->
         <template v-if="!userStore.isAuthenticated">
-          <NuxtLink
-            to="/login"
-            class="px-4 py-1.5 text-(--text-secondary) hover:text-(--text-primary) transition-colors"
+          <button
+            @click="loginMode = 'login'; showLoginDialog = true"
+            class="px-4 py-1.5  bg-primary hover:bg-primary-hover text-white rounded-full transition-colors"
             style="font-size: 13px;"
           >
             登录
-          </NuxtLink>
-          <NuxtLink
+          </button>
+          <!-- <NuxtLink
             to="/register"
-            class="px-4 py-1.5 bg-primary hover:bg-primary-hover text-white rounded-full transition-colors"
+            class="px-4 py-1.5"
             style="font-size: 13px;"
           >
             注册
-          </NuxtLink>
+          </NuxtLink> -->
+
+          <UiDialog
+            v-model:model-value="showLoginDialog"
+            :title="loginMode === 'login' ? '登录' : '注册'"
+            size="xl"
+            :plain="true"
+            :show-close="true"
+          >
+            <LoginForm
+              :mode="loginMode"
+              @close="showLoginDialog = false"
+              @success="handleLoginSuccess"
+              @switch-mode="loginMode = loginMode === 'login' ? 'register' : 'login'"
+            />
+          </UiDialog>
         </template>
 
         <!-- User Menu (when authenticated) -->
@@ -149,6 +164,8 @@ const { isDark, toggleTheme } = useColorTheme()
 
 const searchQuery = ref('')
 const showUserMenu = ref(false)
+const showLoginDialog = ref(false)
+const loginMode = ref<'login' | 'register'>('login')
 const userMenuRef = ref<HTMLElement | null>(null)
 
 const userInitial = computed(() => {
@@ -157,6 +174,11 @@ const userInitial = computed(() => {
 
 const toggleUserMenu = () => {
   showUserMenu.value = !showUserMenu.value
+}
+
+const handleLoginSuccess = () => {
+  showLoginDialog.value = false
+  router.push('/collections')
 }
 
 const handleLogout = () => {

@@ -2,7 +2,13 @@ export interface User {
   id: number
   username: string
   email: string
+  phone?: string
+  phone_verified?: boolean
   role: string
+  points: number
+  level: string
+  level_expires_at?: string
+  total_points_earned: number
   created_at: string
   updated_at: string
 }

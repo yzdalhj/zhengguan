@@ -1,15 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import * as UserModel from '../models/user';
+import { generateToken } from '../utils/jwt';
 import { AppError } from '../middleware/errorHandler';
 import { ApiResponse, User } from '../types';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const JWT_SECRET: any = process.env.JWT_SECRET || 'default_secret';
-const JWT_EXPIRE_IN: any = process.env.JWT_EXPIRE_IN || '7d';
+import type { AuthRequest } from '../middleware/auth';
 
 export const register = async (
   req: Request,
@@ -17,7 +12,7 @@ export const register = async (
   next: NextFunction
 ) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, phone } = req.body;
 
     if (!username || !email || !password) {
       return next(new AppError('Please provide username, email and password', 400));
@@ -33,18 +28,23 @@ export const register = async (
       return next(new AppError('Username already taken', 400));
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
-    const user = await UserModel.createUser(username, email, passwordHash);
+    if (phone) {
+      const existingUserByPhone = await UserModel.findUserByPhone(phone);
+      if (existingUserByPhone) {
+        return next(new AppError('User with this phone already exists', 400));
+      }
+    }
 
-    const token = jwt.sign(
-      { id: user.id, username: user.username, role: user.role },
-      JWT_SECRET,
-      { expiresIn: JWT_EXPIRE_IN }
-    );
+    const passwordHash = await bcrypt.hash(password, 10);
+    const user = await UserModel.createUser(username, email, passwordHash, 'user', phone);
+
+    const token = generateToken(user);
+
+    const { password_hash, ...userWithoutPassword } = user;
 
     res.status(201).json({
       success: true,
-      data: user,
+      data: userWithoutPassword as User,
       message: 'User registered successfully',
     });
   } catch (error) {
@@ -76,11 +76,7 @@ export const login = async (
 
     const { password_hash, ...userWithoutPassword } = user;
 
-    const token = jwt.sign(
-      { id: user.id, username: user.username, role: user.role },
-      JWT_SECRET,
-      { expiresIn: JWT_EXPIRE_IN }
-    );
+    const token = generateToken(user);
 
     res.json({
       success: true,
@@ -95,8 +91,95 @@ export const login = async (
   }
 };
 
+export const loginByPhone = async (
+  req: Request,
+  res: Response<ApiResponse<{ user: User; token: string }>>,
+  next: NextFunction
+) => {
+  try {
+    const { phone, password } = req.body;
+
+    if (!phone || !password) {
+      return next(new AppError('Please provide phone and password', 400));
+    }
+
+    const user = await UserModel.findUserByPhone(phone);
+    if (!user) {
+      return next(new AppError('Invalid credentials', 401));
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password_hash!);
+    if (!isPasswordValid) {
+      return next(new AppError('Invalid credentials', 401));
+    }
+
+    const { password_hash, ...userWithoutPassword } = user;
+
+    const token = generateToken(user);
+
+    res.json({
+      success: true,
+      data: {
+        user: userWithoutPassword as User,
+        token,
+      },
+      message: 'Login successful',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const loginBySms = async (
+  req: Request,
+  res: Response<ApiResponse<{ user: User; token: string }>>,
+  next: NextFunction
+) => {
+  try {
+    return next(new AppError('SMS login not implemented yet', 501));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const sendSmsCode = async (
+  req: Request,
+  res: Response<ApiResponse<void>>,
+  next: NextFunction
+) => {
+  try {
+    return next(new AppError('SMS sending not implemented yet', 501));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const generateQrcode = async (
+  req: Request,
+  res: Response<ApiResponse<{ code: string; expires_at: Date }>>,
+  next: NextFunction
+) => {
+  try {
+    return next(new AppError('QR code login not implemented yet', 501));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const checkQrcode = async (
+  req: Request,
+  res: Response<ApiResponse<{ user?: User; token?: string; status: string }>>,
+  next: NextFunction
+) => {
+  try {
+    return next(new AppError('QR code login not implemented yet', 501));
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getMe = async (
-  req: any,
+  req: AuthRequest,
   res: Response<ApiResponse<User>>,
   next: NextFunction
 ) => {
@@ -120,7 +203,7 @@ export const getMe = async (
 };
 
 export const updatePassword = async (
-  req: any,
+  req: AuthRequest,
   res: Response<ApiResponse<void>>,
   next: NextFunction
 ) => {
@@ -139,7 +222,7 @@ export const updatePassword = async (
       return next(new AppError('User not found', 404));
     }
 
-    const userWithPassword = await UserModel.findUserByEmail(user.email);
+    const userWithPassword = await UserModel.findUserByEmail(user.email!);
     if (!userWithPassword) {
       return next(new AppError('User not found', 404));
     }
