@@ -12,31 +12,35 @@ export const register = async (
   next: NextFunction
 ) => {
   try {
-    const { username, email, password, phone } = req.body;
+    const { username, password, phone } = req.body;
+    let { email } = req.body;
 
-    if (!username || !email || !password) {
-      return next(new AppError('Please provide username, email and password', 400));
+    if (!username || !password) {
+      return next(new AppError('请提供用户名和密码', 400));
     }
 
-    const existingUserByEmail = await UserModel.findUserByEmail(email);
-    if (existingUserByEmail) {
-      return next(new AppError('User with this email already exists', 400));
+    // 如果提供了邮箱，检查是否已存在
+    if (email) {
+      const existingUserByEmail = await UserModel.findUserByEmail(email);
+      if (existingUserByEmail) {
+        return next(new AppError('该邮箱已被注册', 400));
+      }
     }
 
     const existingUserByUsername = await UserModel.findUserByUsername(username);
     if (existingUserByUsername) {
-      return next(new AppError('Username already taken', 400));
+      return next(new AppError('该用户名已被使用', 400));
     }
 
     if (phone) {
       const existingUserByPhone = await UserModel.findUserByPhone(phone);
       if (existingUserByPhone) {
-        return next(new AppError('User with this phone already exists', 400));
+        return next(new AppError('该手机号已被注册', 400));
       }
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const user = await UserModel.createUser(username, email, passwordHash, 'user', phone);
+    const user = await UserModel.createUser(username, email || '', passwordHash, 'user', phone);
 
     const token = generateToken(user);
 
@@ -45,7 +49,7 @@ export const register = async (
     res.status(201).json({
       success: true,
       data: userWithoutPassword as User,
-      message: 'User registered successfully',
+      message: '注册成功',
     });
   } catch (error) {
     next(error);
@@ -61,17 +65,17 @@ export const login = async (
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return next(new AppError('Please provide email and password', 400));
+      return next(new AppError('请提供邮箱和密码', 400));
     }
 
     const user = await UserModel.findUserByEmail(email);
     if (!user) {
-      return next(new AppError('Invalid credentials', 401));
+      return next(new AppError('邮箱或密码错误', 401));
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password_hash!);
     if (!isPasswordValid) {
-      return next(new AppError('Invalid credentials', 401));
+      return next(new AppError('邮箱或密码错误', 401));
     }
 
     const { password_hash, ...userWithoutPassword } = user;
@@ -84,7 +88,7 @@ export const login = async (
         user: userWithoutPassword as User,
         token,
       },
-      message: 'Login successful',
+      message: '登录成功',
     });
   } catch (error) {
     next(error);
@@ -100,17 +104,17 @@ export const loginByPhone = async (
     const { phone, password } = req.body;
 
     if (!phone || !password) {
-      return next(new AppError('Please provide phone and password', 400));
+      return next(new AppError('请提供手机号和密码', 400));
     }
 
     const user = await UserModel.findUserByPhone(phone);
     if (!user) {
-      return next(new AppError('Invalid credentials', 401));
+      return next(new AppError('手机号或密码错误', 401));
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password_hash!);
     if (!isPasswordValid) {
-      return next(new AppError('Invalid credentials', 401));
+      return next(new AppError('手机号或密码错误', 401));
     }
 
     const { password_hash, ...userWithoutPassword } = user;
@@ -123,7 +127,7 @@ export const loginByPhone = async (
         user: userWithoutPassword as User,
         token,
       },
-      message: 'Login successful',
+      message: '登录成功',
     });
   } catch (error) {
     next(error);
@@ -136,7 +140,7 @@ export const loginBySms = async (
   next: NextFunction
 ) => {
   try {
-    return next(new AppError('SMS login not implemented yet', 501));
+    return next(new AppError('短信登录功能暂未开放', 501));
   } catch (error) {
     next(error);
   }
@@ -148,7 +152,7 @@ export const sendSmsCode = async (
   next: NextFunction
 ) => {
   try {
-    return next(new AppError('SMS sending not implemented yet', 501));
+    return next(new AppError('短信发送功能暂未开放', 501));
   } catch (error) {
     next(error);
   }
@@ -160,7 +164,7 @@ export const generateQrcode = async (
   next: NextFunction
 ) => {
   try {
-    return next(new AppError('QR code login not implemented yet', 501));
+    return next(new AppError('扫码登录功能暂未开放', 501));
   } catch (error) {
     next(error);
   }
@@ -172,7 +176,7 @@ export const checkQrcode = async (
   next: NextFunction
 ) => {
   try {
-    return next(new AppError('QR code login not implemented yet', 501));
+    return next(new AppError('扫码登录功能暂未开放', 501));
   } catch (error) {
     next(error);
   }
@@ -185,12 +189,12 @@ export const getMe = async (
 ) => {
   try {
     if (!req.user) {
-      return next(new AppError('Not authenticated', 401));
+      return next(new AppError('未登录', 401));
     }
 
     const user = await UserModel.findUserById(req.user.id);
     if (!user) {
-      return next(new AppError('User not found', 404));
+      return next(new AppError('用户不存在', 404));
     }
 
     res.json({
@@ -209,27 +213,27 @@ export const updatePassword = async (
 ) => {
   try {
     if (!req.user) {
-      return next(new AppError('Not authenticated', 401));
+      return next(new AppError('未登录', 401));
     }
 
     const { currentPassword, newPassword } = req.body;
     if (!currentPassword || !newPassword) {
-      return next(new AppError('Please provide current and new password', 400));
+      return next(new AppError('请提供当前密码和新密码', 400));
     }
 
     const user = await UserModel.findUserById(req.user.id);
     if (!user) {
-      return next(new AppError('User not found', 404));
+      return next(new AppError('用户不存在', 404));
     }
 
     const userWithPassword = await UserModel.findUserByEmail(user.email!);
     if (!userWithPassword) {
-      return next(new AppError('User not found', 404));
+      return next(new AppError('用户不存在', 404));
     }
 
     const isPasswordValid = await bcrypt.compare(currentPassword, userWithPassword.password_hash!);
     if (!isPasswordValid) {
-      return next(new AppError('Current password is incorrect', 401));
+      return next(new AppError('当前密码错误', 401));
     }
 
     const newPasswordHash = await bcrypt.hash(newPassword, 10);
@@ -237,7 +241,7 @@ export const updatePassword = async (
 
     res.json({
       success: true,
-      message: 'Password updated successfully',
+      message: '密码修改成功',
     });
   } catch (error) {
     next(error);

@@ -136,6 +136,22 @@ CREATE TABLE reports (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
+-- 用户观看历史表
+CREATE TABLE watch_history (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    video_id INT REFERENCES videos(id) ON DELETE CASCADE,
+    progress INT DEFAULT 0, -- 观看进度百分比 0-100
+    watched_at TIMESTAMP DEFAULT NOW(),
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(user_id, video_id)
+);
+
+-- 索引：按用户查询，按时间排序
+CREATE INDEX idx_watch_history_user_id ON watch_history(user_id);
+CREATE INDEX idx_watch_history_watched_at ON watch_history(watched_at DESC);
+
 -- 创建索引
 CREATE INDEX idx_videos_status ON videos(status);
 CREATE INDEX idx_videos_platform ON videos(platform);

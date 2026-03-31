@@ -5,7 +5,6 @@ import type { User } from '../types';
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'default_secret';
-const JWT_EXPIRE_IN = process.env.JWT_EXPIRE_IN || '7d';
 
 export interface JwtPayload {
   id: number;
@@ -20,8 +19,10 @@ export const generateToken = (user: User): string => {
     role: user.role,
   };
 
+  const expiresIn = process.env.JWT_EXPIRE_IN || '7d';
+
   return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: JWT_EXPIRE_IN,
+    expiresIn: expiresIn as any,
   });
 };
 

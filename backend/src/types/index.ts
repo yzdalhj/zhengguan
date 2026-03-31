@@ -102,6 +102,17 @@ export interface Report {
   created_at: Date;
 }
 
+export interface WatchHistory {
+  id: number;
+  user_id: number;
+  video_id: number;
+  progress: number;
+  watched_at: Date;
+  created_at: Date;
+  updated_at: Date;
+  video?: Video;
+}
+
 export interface VideoSearchParams {
   page?: number;
   limit?: number;
