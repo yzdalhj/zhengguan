@@ -18,6 +18,16 @@
             <span class="text-sm font-medium">首页推荐</span>
           </button>
 
+          <!-- 视频列表 -->
+          <button
+            @click="handleMenuChange('/videos')"
+            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 cursor-pointer mb-1"
+            :class="activeMenu === '/videos' ? 'text-white bg-primary shadow-sm shadow-(--primary)/20' : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'"
+          >
+            <Icon name="heroicons:film" class="w-5 h-5" />
+            <span class="text-sm font-medium">全部视频</span>
+          </button>
+
           <!-- 观看历史 -->
           <button
             @click="handleMenuChange('/history')"
@@ -26,18 +36,6 @@
           >
             <Icon name="heroicons:clock" class="w-5 h-5" />
             <span class="text-sm font-medium">观看历史</span>
-          </button>
-
-          <!-- 分类 -->
-          <button
-            v-for="category in categoryItems"
-            :key="category.value"
-            @click="handleMenuChange(category.value)"
-            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 cursor-pointer mb-1"
-            :class="activeMenu === category.value ? 'text-white bg-primary shadow-sm shadow-(--primary)/20' : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'"
-          >
-            <Icon :name="category.icon" class="w-5 h-5" />
-            <span class="text-sm font-medium">{{ category.label }}</span>
           </button>
         </nav>
       </aside>
@@ -63,31 +61,10 @@ const route = useRoute()
 const activeMenu = computed(() => {
   const path = route.path
   if (path === '/') return '/'
+  if (path === '/videos') return '/videos'
   if (path === '/history') return '/history'
-
-  const category = route.query.category as string
-  const tag = route.query.tag as string
-  if (category) return `/search?category=${category}`
-  if (tag) return `/search?tag=${tag}`
-
   return path
 })
-
-const categoryItems = [
-  { label: '动作风格', value: '/search?category=动作风格', icon: 'heroicons:sparkles' },
-  { label: '镜头语言', value: '/search?category=镜头语言', icon: 'heroicons:video-camera' },
-  { label: '场景', value: '/search?category=场景', icon: 'heroicons:map-pin' },
-  { label: '情绪', value: '/search?category=情绪', icon: 'heroicons:face-smile' },
-  { label: '参考用途', value: '/search?category=参考用途', icon: 'heroicons:question-mark-circle' },
-  { label: '打斗', value: '/search?category=打斗', icon: 'heroicons:shield-exclamation' },
-  { label: '追逐', value: '/search?category=追逐', icon: 'heroicons:arrow-trending-up' },
-  { label: '特写', value: '/search?category=特写', icon: 'heroicons:magnifying-glass' },
-  { label: '一镜到底', value: '/search?category=一镜到底', icon: 'heroicons:play-circle' },
-  { label: '慢动作', value: '/search?category=慢动作', icon: 'heroicons:clock' },
-  { label: '转场', value: '/search?category=转场', icon: 'heroicons:arrows-right-left' },
-  { label: '构图', value: '/search?category=构图', icon: 'heroicons:photo' },
-  { label: '光影', value: '/search?category=光影', icon: 'heroicons:sun' },
-]
 
 const handleMenuChange = (value: string) => {
   navigateTo(value)

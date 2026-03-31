@@ -29,7 +29,7 @@
               </div>
             </div>
             <NuxtLink
-              to="/search"
+              to="/videos"
               class="bg-white text-primary font-medium rounded-lg hover:bg-white/90 transition-colors whitespace-nowrap shrink-0"
               style="padding: 10px 20px; font-size: 13px;"
             >
@@ -40,50 +40,28 @@
       </div>
     </ClientOnly>
 
-    <!-- 视频网格 -->
+    <!-- 最新视频分区 -->
     <section class="px-5 py-6">
-      <div
-        class="grid grid-cols-5 gap-5"
-      >
-        <video-card v-for="video in videos" :key="video.id" :video="video" />
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold text-(--text-primary)">最新视频</h2>
+        <NuxtLink
+          to="/videos"
+          class="flex items-center gap-1 px-4 py-2 text-primary hover:text-primary-hover transition-colors rounded-lg hover:bg-primary/10"
+        >
+          <span class="text-sm font-medium">更多视频</span>
+          <Icon name="heroicons:chevron-right" class="w-4 h-4" />
+        </NuxtLink>
       </div>
-    </section>
-    <!-- 分页 -->
-    <section class="py-4">
-      <div class="flex items-center justify-center gap-2">
-        <button
-          @click="handlePageChange(1)"
-          :disabled="currentPage === 1"
-          class="px-3 py-1.5 text-(--text-secondary) hover:text-(--text-primary) disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-          style="font-size: 13px;"
-        >
-          首页
-        </button>
-        <button
-          v-for="page in displayedPages"
-          :key="page"
-          @click="handlePageChange(page)"
-          class="rounded-lg font-medium transition-colors"
-          style="width: 32px; height: 32px; font-size: 13px;"
-          :class="currentPage === page ? 'bg-primary text-white' : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'"
-        >
-          {{ page }}
-        </button>
-        <button
-          @click="handlePageChange(totalPages)"
-          :disabled="currentPage === totalPages"
-          class="px-3 py-1.5 text-(--text-secondary) hover:text-(--text-primary) disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-          style="font-size: 13px;"
-        >
-          尾页
-        </button>
+      <div
+        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-2 md:gap-3"
+      >
+        <video-card v-for="video in videos.slice(0, 14)" :key="video.id" :video="video" />
       </div>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
 import type { Video } from '~/types'
 
 // SEO
@@ -97,9 +75,9 @@ useHead({
 const { $api } = useNuxtApp()
 const userStore = useUserStore()
 
-// 使用 SSR 获取首屏数据 - 关键优化点
-const { data: videosResponse, refresh: refreshVideos } = await useAsyncData(
-  'videos-page-1',
+// 使用 SSR 获取首屏数据
+const { data: videosResponse } = await useAsyncData(
+  'home-videos',
   async () => {
     const response = await $api.get('/videos', {
       params: { page: 1, limit: 20 }
@@ -108,71 +86,15 @@ const { data: videosResponse, refresh: refreshVideos } = await useAsyncData(
   },
   {
     server: true,
-    default: () => ({ data: [], pagination: { total: 0, totalPages: 0 } })
-  }
-)
-
-// 获取标签数据
-const { data: tagsData } = await useAsyncData(
-  'tags',
-  async () => {
-    const response = await $api.get('/tags')
-    return response.data
-  },
-  {
-    server: true,
-    default: () => []
+    default: () => ({ data: [] })
   }
 )
 
 // 本地状态管理
-const videos = ref<Video[]>(videosResponse.value?.data || [])
-const currentPage = ref(1)
-const totalPages = ref(videosResponse.value?.pagination?.totalPages || 1)
-const total = ref(videosResponse.value?.pagination?.total || 0)
+const videos = computed(() => videosResponse.value?.data || [])
 
 // 关闭横幅
 const closeBanner = () => {
   userStore.closeBanner()
 }
-
-// 分页显示逻辑
-const displayedPages = computed(() => {
-  const pages: number[] = []
-  const maxVisible = 7
-  let start = Math.max(1, currentPage.value - Math.floor(maxVisible / 2))
-  let end = Math.min(totalPages.value, start + maxVisible - 1)
-
-  if (end - start + 1 < maxVisible) {
-    start = Math.max(1, end - maxVisible + 1)
-  }
-
-  for (let i = start; i <= end; i++) {
-    pages.push(i)
-  }
-  return pages
-})
-
-// 处理页码变化
-const handlePageChange = async (page: number) => {
-  if (page === currentPage.value) return
-  
-  const response = await $api.get('/videos', {
-    params: { page, limit: 20 }
-  })
-  
-  videos.value = response.data || []
-  currentPage.value = page
-  total.value = response.pagination?.total || 0
-  totalPages.value = response.pagination?.totalPages || 0
-  
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-}
-
-// 客户端初始化
-onMounted(() => {
-})
-
-onUnmounted(() => {
-})
 </script>

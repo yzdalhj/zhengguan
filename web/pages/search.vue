@@ -9,7 +9,7 @@
 
     <!-- Video Grid -->
     <div v-if="!loading && videos.length > 0" class="p-4 lg:p-6 pt-2">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-2 md:gap-3">
         <video-card
           v-for="video in videos"
           :key="video.id"
@@ -20,15 +20,19 @@
 
     <!-- Loading State -->
     <div v-else-if="loading" class="p-4 lg:p-6 pt-2">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        <div v-for="i in 12" :key="i" class="bg-(--bg-elevated) rounded-xl overflow-hidden">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-2 md:gap-3">
+        <div v-for="i in 14" :key="i" class="bg-(--bg-elevated) rounded-lg overflow-hidden shadow-sm">
           <div class="aspect-video bg-(--bg-secondary) animate-pulse"></div>
-          <div class="p-3 space-y-2">
-            <div class="h-4 bg-(--bg-secondary) rounded animate-pulse"></div>
-            <div class="h-3 bg-(--bg-secondary) rounded w-2/3 animate-pulse"></div>
-            <div class="flex gap-2 pt-1">
-              <div class="h-3 w-16 bg-(--bg-secondary) rounded animate-pulse"></div>
-              <div class="h-3 w-12 bg-(--bg-secondary) rounded animate-pulse"></div>
+          <div class="p-2 space-y-1.5">
+            <div class="h-3 bg-(--bg-secondary) rounded animate-pulse"></div>
+            <div class="h-3 bg-(--bg-secondary) rounded w-3/4 animate-pulse"></div>
+            <div class="flex items-center gap-1.5 pt-0.5">
+              <div class="w-4 h-4 rounded-full bg-(--bg-secondary) animate-pulse"></div>
+              <div class="h-2.5 bg-(--bg-secondary) rounded w-20 animate-pulse"></div>
+            </div>
+            <div class="flex gap-1.5 pt-0.5">
+              <div class="h-2 bg-(--bg-secondary) rounded w-12 animate-pulse"></div>
+              <div class="h-2 bg-(--bg-secondary) rounded w-10 animate-pulse"></div>
             </div>
           </div>
         </div>
