@@ -338,6 +338,8 @@ const submitReport = async () => {
   }
 }
 
+const { addToHistory } = useWatchHistory()
+
 const fetchVideo = async () => {
   loading.value = true
   try {
@@ -349,8 +351,7 @@ const fetchVideo = async () => {
       checkCollection(videoId.value)
     }
     // 添加到观看历史
-    const { addToHistory } = useWatchHistory()
-    addToHistory(res.data)
+    await addToHistory(res.data)
   } catch (err) {
     console.error('获取视频失败:', err)
     video.value = null

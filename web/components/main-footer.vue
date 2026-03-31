@@ -1,6 +1,6 @@
 <template>
   <footer class="bg-(--bg-secondary) border-t border-(--border-color)">
-    <div class="max-w-7xl mx-auto h-[30px] flex items-center justify-between px-4">
+    <div class="mx-auto h-14 flex items-center justify-between p-3 pl-10 pr-10">
       <!-- 左侧：版权信息 -->
       <p class="text-xs text-(--text-muted)">
         &copy; {{ currentYear }} 帧观. 保留所有权利.
@@ -45,7 +45,7 @@
           target="_blank"
           class="text-(--text-secondary) hover:text-(--text-primary) transition-colors"
         >
-          <dynamic-icon name="logo-github" size="18px" />
+          <dynamic-icon name="logo-github" size="16px" />
         </a>
       </div>
     </div>
@@ -56,7 +56,7 @@
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       @click.self="showDisclaimerModal = false"
     >
-      <div class="bg-(--bg-elevated) border border-(--border-color) rounded-xl w-[600px] max-w-[90vw] max-h-[80vh] overflow-y-auto">
+      <div class="bg-(--bg-elevated) border border-(--border-color) rounded-xl w-150 max-h-[80vh] overflow-y-auto">
         <div class="p-6">
           <h3 class="text-lg font-semibold text-(--text-primary) mb-4">免责声明</h3>
           <div class="text-sm text-(--text-secondary) space-y-4">
@@ -102,7 +102,7 @@
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       @click.self="showCopyrightModal = false"
     >
-      <div class="bg-(--bg-elevated) border border-(--border-color) rounded-xl w-[600px] max-w-[90vw] max-h-[80vh] overflow-y-auto">
+      <div class="bg-(--bg-elevated) border border-(--border-color) rounded-xl w-150 max-h-[80vh] overflow-y-auto">
         <div class="p-6">
           <h3 class="text-lg font-semibold text-(--text-primary) mb-4">版权声明</h3>
           <div class="text-sm text-(--text-secondary) space-y-4">
@@ -141,13 +141,17 @@
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       @click.self="showPrivacyModal = false"
     >
-      <div class="bg-(--bg-elevated) border border-(--border-color) rounded-xl w-[600px] max-w-[90vw] max-h-[80vh] overflow-y-auto">
+      <div class="bg-(--bg-elevated) border border-(--border-color) rounded-xl w-150 max-h-[80vh] overflow-y-auto">
         <div class="p-6">
           <h3 class="text-lg font-semibold text-(--text-primary) mb-4">隐私政策</h3>
           <div class="text-sm text-(--text-secondary) space-y-4">
             <p>
               <strong class="text-(--text-primary)">一、信息收集范围</strong><br>
-              我们仅收集以下信息：用户主动提交的搜索关键词（用于优化搜索结果）、浏览器类型和版本（用于兼容性优化）、访问时间和页面（用于服务优化）。我们不收集用户的真实姓名、身份证号、手机号等个人隐私信息。
+              我们收集的信息包括：<br>
+              1. <strong>账户信息</strong>：手机号（用于登录验证和账户安全）<br>
+              2. <strong>实名信息</strong>：真实姓名、身份证号（用于实名认证，符合相关法律法规要求）<br>
+              3. <strong>使用数据</strong>：搜索关键词、浏览器类型、访问时间和页面（用于服务优化）<br>
+              4. <strong>偏好设置</strong>：主题偏好、观看历史（用于提升用户体验）
             </p>
             <p>
               <strong class="text-(--text-primary)">二、Cookie 与本地存储</strong><br>
@@ -184,7 +188,7 @@
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       @click.self="showContactModal = false"
     >
-      <div class="bg-(--bg-elevated) border border-(--border-color) rounded-xl w-[600px] max-w-[90vw] max-h-[80vh] overflow-y-auto">
+      <div class="bg-(--bg-elevated) border border-(--border-color) rounded-xl w-600px max-w-[90vw] max-h-[80vh] overflow-y-auto">
         <div class="p-6">
           <h3 class="text-lg font-semibold text-(--text-primary) mb-4">侵权投诉</h3>
           <div class="text-sm text-(--text-secondary) space-y-4">

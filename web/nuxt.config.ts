@@ -11,6 +11,12 @@ export default defineNuxtConfig({
   css: [
     '~/assets/css/main.css',
   ],
+  // Icon 配置
+  icon: {
+    clientBundle: {
+      scan: true,
+    },
+  },
   vite: {
     plugins: [
       tailwindcss(),
@@ -89,6 +95,8 @@ export default defineNuxtConfig({
   // 开发服务器配置
   devServer: {
     port: 8080,
+    host: '0.0.0.0',
+
   },
 
   // Nitro 配置

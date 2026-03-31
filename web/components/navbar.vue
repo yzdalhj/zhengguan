@@ -1,22 +1,20 @@
 <template>
   <nav
-    class="fixed top-0 left-0 right-0 z-50 bg-(--bg-primary) border-b border-(--border-color)"
-    style="height: 56px;"
+    class="fixed top-0 left-0 right-0 z-50 bg-(--bg-primary) border-b border-(--border-color) h-14"
   >
-    <div class="flex items-center h-full px-4">
+    <div class="flex items-center h-full px-4 min-h-0">
       <!-- Logo -->
       <NuxtLink to="/" class="flex items-center gap-2 shrink-0 mr-8">
         <div
-          class="rounded-lg bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center"
-          style="width: 32px; height: 32px;"
+          class="rounded-lg bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center w-8 h-8"
         >
           <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
           </svg>
         </div>
         <div class="hidden sm:flex flex-col">
-          <span class="text-(--text-primary) font-semibold leading-tight" style="font-size: 16px;">帧观</span>
-          <span class="text-(--text-muted) leading-tight" style="font-size: 11px;">每一帧，都是灵感</span>
+          <span class="text-(--text-primary) font-semibold leading-tight text-lg">帧观</span>
+          <span class="text-(--text-muted) leading-tight text-xs">每一帧，都是灵感</span>
         </div>
       </NuxtLink>
 
@@ -28,14 +26,12 @@
             @keyup.enter="handleSearch"
             type="text"
             placeholder="搜索感兴趣的内容或作者"
-            class="w-full bg-(--bg-input) border border-(--border-color) rounded-full text-(--text-primary) placeholder-(--text-muted) focus:border-primary focus:outline-none transition-colors"
-            style="height: 36px; padding-left: 36px; padding-right: 72px; font-size: 13px;"
+            class="w-full h-9 pl-9 pr-18 text-sm bg-(--bg-input) border border-(--border-color) rounded-full text-(--text-primary) placeholder-(--text-muted) focus:border-primary focus:outline-none transition-colors"
           />
-          <dynamic-icon name="search" size="16px" class="absolute left-3 top-1/2 -translate-y-1/2 text-(--text-muted)" />
+          <dynamic-icon name="search" size="12px" class="absolute left-3 top-1/2 -translate-y-1/2 text-(--text-muted)" />
           <button
             @click="handleSearch"
-            class="absolute top-1/2 -translate-y-1/2 bg-primary hover:bg-primary-hover text-white font-medium rounded-full transition-colors"
-            style="right: 4px; height: 28px; padding: 0 16px; font-size: 13px;"
+            class="absolute right-1 h-7 pl-4 pr-4 text-sm top-1/2 -translate-y-1/2 bg-primary hover:bg-primary-hover text-white font-medium rounded-full transition-colors"
           >
             搜索
           </button>
@@ -43,15 +39,15 @@
       </div>
 
       <!-- Right Side Actions -->
-      <div class="flex items-center gap-1 ml-4 shrink-0">
+      <div class="flex items-center gap-1 ml-4 shrink-0 min-h-0">
         <!-- Theme Toggle -->
         <button
           @click="toggleTheme"
           class="flex items-center gap-1.5 px-3 py-1.5 text-(--text-secondary) hover:text-(--text-primary) transition-colors"
           :title="isDark ? '切换到浅色模式' : '切换到深色模式'"
         >
-          <dynamic-icon :name="isDark ? 'sunny' : 'moon'" size="16px" />
-          <span class="hidden md:block" style="font-size: 13px;">{{ isDark ? '浅色' : '深色' }}</span>
+          <dynamic-icon :name="isDark ? 'sunny' : 'moon'" size="12px" />
+          <span class="hidden md:block text-xs">{{ isDark ? '浅色' : '深色' }}</span>
         </button>
 
         <!-- VIP -->
@@ -60,10 +56,12 @@
           <span class="hidden md:block" style="font-size: 13px;">会员</span>
         </button> -->
 
-        <!-- History -->
-        <button class="flex items-center gap-1.5 px-3 py-1.5 text-(--text-secondary) hover:text-(--text-primary) transition-colors">
-          <dynamic-icon name="time" size="20px" />
-          <span class="hidden md:block" style="font-size: 13px;">历史</span>
+        <!-- Collections -->
+        <button
+          @click="navigateTo('/collections')"
+          class="flex items-center gap-1.5 px-3 py-1.5 text-(--text-secondary) hover:text-(--text-primary) transition-colors">
+            <Icon name="heroicons:heart" size="12px" />
+            <span class="hidden md:block text-xs">收藏</span>
         </button>
  
 
@@ -71,8 +69,7 @@
         <template v-if="!userStore.isAuthenticated">
           <button
             @click="loginMode = 'login'; showLoginDialog = true"
-            class="px-4 py-1.5  bg-primary hover:bg-primary-hover text-white rounded-full transition-colors"
-            style="font-size: 13px;"
+            class="px-4 py-1.5  bg-primary hover:bg-primary-hover text-white rounded-full transition-colors text-sm"
           >
             登录
           </button>

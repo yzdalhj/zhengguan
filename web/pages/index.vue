@@ -49,7 +49,7 @@
       </div>
     </section>
     <!-- 分页 -->
-    <section style="padding: 20px;">
+    <section class="py-4">
       <div class="flex items-center justify-center gap-2">
         <button
           @click="handlePageChange(1)"
@@ -98,17 +98,17 @@ const { $api } = useNuxtApp()
 const userStore = useUserStore()
 
 // 使用 SSR 获取首屏数据 - 关键优化点
-const { data: videosData, refresh: refreshVideos } = await useAsyncData(
+const { data: videosResponse, refresh: refreshVideos } = await useAsyncData(
   'videos-page-1',
   async () => {
     const response = await $api.get('/videos', {
       params: { page: 1, limit: 20 }
     })
-    return response.data
+    return response
   },
   {
     server: true,
-    default: () => []
+    default: () => ({ data: [], pagination: { total: 0, totalPages: 0 } })
   }
 )
 
@@ -126,17 +126,10 @@ const { data: tagsData } = await useAsyncData(
 )
 
 // 本地状态管理
-const videos = ref<Video[]>(videosData.value || [])
+const videos = ref<Video[]>(videosResponse.value?.data || [])
 const currentPage = ref(1)
-const totalPages = ref(1)
-const total = ref(0)
-
-// 初始化分页信息
-if (videosData.value && videosData.value.length > 0) {
-  // 从响应头或默认设置中获取分页信息
-  totalPages.value = Math.ceil(100 / 20) // 假设默认值，实际应该从API返回
-  total.value = 100
-}
+const totalPages = ref(videosResponse.value?.pagination?.totalPages || 1)
+const total = ref(videosResponse.value?.pagination?.total || 0)
 
 // 关闭横幅
 const closeBanner = () => {

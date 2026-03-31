@@ -19,7 +19,7 @@
         <h2 class="text-[clamp(1.75rem,3vw,2.5rem)] font-bold text-(--text-primary) mb-2">{{ mode === 'login' ? '欢迎登录' : '注册账号' }}</h2>
       </div>
 
-      <div class="flex mb-8 border-b border-(--border-color)">
+      <div v-if="mode === 'login'" class="flex mb-8 border-b border-(--border-color)">
         <button
           v-for="tab in tabs"
           :key="tab.value"
@@ -34,99 +34,94 @@
       </div>
 
       <form @submit.prevent="handleSubmit" class="space-y-6 flex-1">
-        <div v-if="activeTab === 'phone'" class="relative">
-          <div class="flex items-center px-5 py-4 bg-(--bg-secondary) border border-(--border-color) rounded-xl">
-            <span class="text-(--text-primary) text-base whitespace-nowrap">+86</span>
-            <span class="mx-3 text-(--border-color)">|</span>
-            <input
-              v-model="phone"
-              type="tel"
-              required
-              class="flex-1 bg-transparent text-(--text-primary) text-base placeholder:text-(--text-muted) focus:outline-none"
-              placeholder="请输入手机号"
-            />
-            <button v-if="phone" type="button" @click="phone = ''" class="ml-2 text-(--text-muted) hover:text-(--text-secondary) cursor-pointer">
-              <Icon name="mdi:close" size="18" />
+        <!-- 扫码登录 -->
+        <div v-if="activeTab === 'qrcode'" class="flex flex-col items-center justify-center py-8">
+          <div class="w-48 h-48 bg-(--bg-secondary) border border-(--border-color) rounded-xl flex items-center justify-center mb-4">
+            <div class="text-center text-(--text-muted)">
+              <Icon name="mdi:qrcode" size="64" />
+              <p class="mt-2 text-sm">二维码区域</p>
+            </div>
+          </div>
+          <p class="text-(--text-secondary) text-sm">请使用微信扫码登录</p>
+          <p class="text-(--text-muted) text-xs mt-2">扫码登录功能暂未开放</p>
+        </div>
+
+        <!-- 手机号登录 -->
+        <template v-else>
+          <div class="relative">
+            <div class="flex items-center px-5 py-4 bg-(--bg-secondary) border border-(--border-color) rounded-xl">
+              <span class="text-(--text-primary) text-base whitespace-nowrap">+86</span>
+              <span class="mx-3 text-(--border-color)">|</span>
+              <input
+                v-model="phone"
+                type="tel"
+                required
+                class="flex-1 bg-transparent text-(--text-primary) text-base placeholder:text-(--text-muted) focus:outline-none"
+                placeholder="请输入手机号"
+              />
+              <button v-if="phone" type="button" @click="phone = ''" class="ml-2 text-(--text-muted) hover:text-(--text-secondary) cursor-pointer">
+                <Icon name="mdi:close" size="18" />
+              </button>
+            </div>
+          </div>
+
+          <div v-if="mode === 'login'" class="flex gap-4 mb-2">
+            <button
+              type="button"
+              @click="loginMethod = 'code'"
+              class="flex-1 py-2 px-4 rounded-lg text-center font-medium transition-colors"
+              :class="loginMethod === 'code' ? 'bg-primary text-white' : 'bg-(--bg-secondary) text-(--text-secondary) hover:bg-(--bg-elevated)'"
+            >
+              验证码登录
+            </button>
+            <button
+              type="button"
+              @click="loginMethod = 'password'"
+              class="flex-1 py-2 px-4 rounded-lg text-center font-medium transition-colors"
+              :class="loginMethod === 'password' ? 'bg-primary text-white' : 'bg-(--bg-secondary) text-(--text-secondary) hover:bg-(--bg-elevated)'"
+            >
+              密码登录
             </button>
           </div>
-        </div>
 
-        <div v-if="activeTab === 'account'">
-          <input
-            v-model="account"
-            type="text"
-            required
-            class="w-full px-5 py-4 bg-(--bg-secondary) border border-(--border-color) rounded-xl text-(--text-primary) text-base placeholder:text-(--text-muted) transition-all duration-200 focus:outline-none focus:border-(--text-secondary) focus:ring-0"
-            placeholder="请输入用户名"
-          />
-        </div>
-
-        <div v-if="activeTab === 'email'">
-          <input
-            v-model="email"
-            type="email"
-            required
-            class="w-full px-5 py-4 bg-(--bg-secondary) border border-(--border-color) rounded-xl text-(--text-primary) text-base placeholder:text-(--text-muted) transition-all duration-200 focus:outline-none focus:border-(--text-secondary) focus:ring-0"
-            placeholder="请输入邮箱"
-          />
-        </div>
-
-        <div v-if="mode === 'login' && activeTab === 'phone'" class="flex gap-4 mb-2">
-          <button
-            type="button"
-            @click="loginMethod = 'code'"
-            class="flex-1 py-2 px-4 rounded-lg text-center font-medium transition-colors"
-            :class="loginMethod === 'code' ? 'bg-primary text-white' : 'bg-(--bg-secondary) text-(--text-secondary) hover:bg-(--bg-elevated)'"
-          >
-            验证码登录
-          </button>
-          <button
-            type="button"
-            @click="loginMethod = 'password'"
-            class="flex-1 py-2 px-4 rounded-lg text-center font-medium transition-colors"
-            :class="loginMethod === 'password' ? 'bg-primary text-white' : 'bg-(--bg-secondary) text-(--text-secondary) hover:bg-(--bg-elevated)'"
-          >
-            密码登录
-          </button>
-        </div>
-
-        <div v-if="mode === 'login' && activeTab === 'phone' && loginMethod === 'code'" class="flex">
-          <input
-            v-model="code"
-            type="text"
-            required
-            class="flex-1 px-5 py-4 bg-(--bg-secondary) border border-(--border-color) rounded-xl text-(--text-primary) text-base placeholder:text-(--text-muted) transition-all duration-200 focus:outline-none focus:border-(--text-secondary) focus:ring-0 mr-3"
-            placeholder="请输入验证码"
-          />
-          <button
-            type="button"
-            @click="sendCode"
-            :disabled="countdown > 0 || !phone"
-            class="px-6 py-4 bg-(--bg-secondary) border border-(--border-color) rounded-xl text-(--text-secondary) text-base font-medium whitespace-nowrap hover:bg-(--bg-elevated) transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {{ countdown > 0 ? `${countdown}s后重发` : '获取验证码' }}
-          </button>
-        </div>
-
-        <div v-if="mode === 'login' && (activeTab !== 'phone' || loginMethod === 'password')">
-          <div class="relative">
+          <div v-if="mode === 'login' && loginMethod === 'code'" class="flex">
             <input
-              v-model="password"
-              :type="showPassword ? 'text' : 'password'"
+              v-model="code"
+              type="text"
               required
-              class="w-full px-5 py-4 bg-(--bg-secondary) border border-(--border-color) rounded-xl text-(--text-primary) text-base placeholder:text-(--text-muted) transition-all duration-200 focus:outline-none focus:border-(--text-secondary) focus:ring-0 pr-16"
-              placeholder="请输入密码"
+              class="flex-1 px-5 py-4 bg-(--bg-secondary) border border-(--border-color) rounded-xl text-(--text-primary) text-base placeholder:text-(--text-muted) transition-all duration-200 focus:outline-none focus:border-(--text-secondary) focus:ring-0 mr-3"
+              placeholder="请输入验证码"
             />
             <button
               type="button"
-              @click="togglePassword"
-              class="absolute right-6 top-1/2 -translate-y-1/2 text-(--text-muted) hover:text-(--text-secondary) transition-colors duration-200 cursor-pointer"
+              @click="sendCode"
+              :disabled="countdown > 0 || !phone"
+              class="px-6 py-4 bg-(--bg-secondary) border border-(--border-color) rounded-xl text-(--text-secondary) text-base font-medium whitespace-nowrap hover:bg-(--bg-elevated) transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Icon v-if="!showPassword" name="mdi:eye-outline" size="20" />
-              <Icon v-else name="mdi:eye-off-outline" size="20" />
+              {{ countdown > 0 ? `${countdown}s后重发` : '获取验证码' }}
             </button>
           </div>
-        </div>
+
+          <div v-if="mode === 'login' && loginMethod === 'password'">
+            <div class="relative">
+              <input
+                v-model="password"
+                :type="showPassword ? 'text' : 'password'"
+                required
+                class="w-full px-5 py-4 bg-(--bg-secondary) border border-(--border-color) rounded-xl text-(--text-primary) text-base placeholder:text-(--text-muted) transition-all duration-200 focus:outline-none focus:border-(--text-secondary) focus:ring-0 pr-16"
+                placeholder="请输入密码"
+              />
+              <button
+                type="button"
+                @click="togglePassword"
+                class="absolute right-6 top-1/2 -translate-y-1/2 text-(--text-muted) hover:text-(--text-secondary) transition-colors duration-200 cursor-pointer"
+              >
+                <Icon v-if="!showPassword" name="mdi:eye-outline" size="20" />
+                <Icon v-else name="mdi:eye-off-outline" size="20" />
+              </button>
+            </div>
+          </div>
+        </template>
 
         <div v-if="mode === 'register'">
           <div class="relative">
@@ -217,12 +212,11 @@ const userStore = useUserStore()
 const { $api } = useNuxtApp()
 
 const tabs = [
-  { label: '账号登录', value: 'account' },
-  { label: '邮箱登录', value: 'email' },
   { label: '手机登录', value: 'phone' },
+  { label: '扫码登录', value: 'qrcode' },
 ]
 
-const activeTab = ref('account')
+const activeTab = ref('phone')
 const account = ref('')
 const email = ref('')
 const phone = ref('')
@@ -241,13 +235,17 @@ const togglePassword = () => {
 }
 
 const canSubmit = computed(() => {
-  if (activeTab.value === 'phone' && !phone.value) return false
-  if (activeTab.value === 'account' && !account.value) return false
-  if (activeTab.value === 'email' && !email.value) return false
+  // 扫码登录不需要表单验证
+  if (props.mode === 'login' && activeTab.value === 'qrcode') return true
+  
+  // 手机号登录/注册需要手机号
+  if (!phone.value) return false
+  
   if (props.mode === 'login') {
-    if (activeTab.value === 'phone' && loginMethod.value === 'code' && !code.value) return false
-    if ((activeTab.value !== 'phone' || loginMethod.value === 'password') && !password.value) return false
+    if (loginMethod.value === 'code' && !code.value) return false
+    if (loginMethod.value === 'password' && !password.value) return false
   }
+  
   if (props.mode === 'register' && (!password.value || !confirmPassword.value)) return false
   if (props.mode === 'register' && password.value !== confirmPassword.value) return false
   return true
@@ -284,22 +282,20 @@ const handleSubmit = async () => {
   try {
     if (props.mode === 'login') {
       // 登录逻辑
-      if (activeTab.value === 'email') {
-        // 邮箱登录
-        await userStore.login(email.value, password.value)
-      } else if (activeTab.value === 'phone') {
-        if (loginMethod.value === 'password') {
-          // 手机号密码登录
-          await userStore.loginByPhone(phone.value, password.value)
-        } else {
-          // 手机号验证码登录（预留）
-          error.value = '验证码登录功能暂未开放'
-          loading.value = false
-          return
-        }
+      if (activeTab.value === 'qrcode') {
+        // 扫码登录（预留）
+        error.value = '扫码登录功能暂未开放'
+        loading.value = false
+        return
+      }
+      
+      // 手机号登录
+      if (loginMethod.value === 'password') {
+        // 手机号密码登录
+        await userStore.loginByPhone(phone.value, password.value)
       } else {
-        // 账号登录（使用用户名）
-        error.value = '用户名登录功能暂未开放，请使用邮箱或手机号登录'
+        // 手机号验证码登录（预留）
+        error.value = '验证码登录功能暂未开放'
         loading.value = false
         return
       }
@@ -312,9 +308,9 @@ const handleSubmit = async () => {
       }
       router.push('/collections')
     } else {
-      // 注册逻辑
-      if (!email.value) {
-        error.value = '注册需要使用邮箱'
+      // 注册逻辑 - 使用手机号注册
+      if (!phone.value) {
+        error.value = '请输入手机号'
         loading.value = false
         return
       }
@@ -331,13 +327,9 @@ const handleSubmit = async () => {
         return
       }
       
-      // 使用邮箱作为用户名（或生成一个用户名）
-      const username = account.value || email.value.split('@')[0]
-      if (phone.value) {
-        await userStore.register(username, email.value, password.value, phone.value)
-      } else {
-        await userStore.register(username, email.value, password.value)
-      }
+      const username = phone.value
+      const email = ''
+      await userStore.register(username, email, password.value, phone.value)
       
       // 注册成功，切换到登录模式
       emit('switch-mode')

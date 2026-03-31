@@ -34,7 +34,7 @@ export function useCollection() {
         await $api.delete(`/user/collections/${videoId}`)
         isCollected.value = false
       } else {
-        await $api.post('/user/collections', { video_id: videoId })
+        await $api.post(`/user/collections/${videoId}`)
         isCollected.value = true
       }
     } catch (err) {
@@ -44,7 +44,7 @@ export function useCollection() {
   }
 
   return {
-    isCollected: readonly(isCollected),
+    isCollected,
     checking: readonly(checking),
     checkCollection,
     toggleCollection,
