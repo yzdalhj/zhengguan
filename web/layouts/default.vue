@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col min-h-screen bg-(--bg-primary)">
     <!-- Header / Navbar -->
-    <header class="h-[56px] shrink-0">
+    <header class="h-14 shrink-0">
       <navbar />
     </header>
 
@@ -12,7 +12,7 @@
           <button
             @click="handleMenuChange('/')"
             class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 cursor-pointer mb-1"
-            :class="activeMenu === '/' ? 'text-white bg-primary hover:bg-(--primary-hover) shadow-sm shadow-(--primary)/20' : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'"
+            :class="activeMenu === '/' ? 'text-white bg-primary shadow-sm shadow-(--primary)/20' : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'"
           >
             <Icon name="heroicons:home" class="w-5 h-5" />
             <span class="text-sm font-medium">首页推荐</span>
