@@ -51,10 +51,13 @@
         </button>
 
         <!-- VIP -->
-        <!-- <button class="flex items-center gap-1.5 px-3 py-1.5 text-(--text-secondary) hover:text-(--text-primary) transition-colors">
-          <dynamic-icon name="star" size="16px" />
-          <span class="hidden md:block" style="font-size: 13px;">会员</span>
-        </button> -->
+        <NuxtLink
+          to="/vip"
+          class="flex items-center gap-1.5 px-3 py-1.5 text-amber-400 hover:text-amber-300 transition-colors"
+        >
+          <Icon name="heroicons:crown" size="16px" />
+          <span class="hidden md:block text-xs font-medium">会员</span>
+        </NuxtLink>
 
         <!-- Collections -->
         <button
@@ -133,6 +136,24 @@
                 >
                   <dynamic-icon name="heart" size="20px" />
                   我的收藏
+                </NuxtLink>
+                <NuxtLink
+                  to="/prompts"
+                  @click="showUserMenu = false"
+                  class="flex items-center gap-2 px-4 py-2 text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary) transition-colors"
+                  style="font-size: 13px;"
+                >
+                  <dynamic-icon name="sparkles" size="20px" />
+                  提示词库
+                </NuxtLink>
+                <NuxtLink
+                  to="/vip"
+                  @click="showUserMenu = false"
+                  class="flex items-center gap-2 px-4 py-2 text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 transition-colors"
+                  style="font-size: 13px;"
+                >
+                  <dynamic-icon name="crown" size="20px" />
+                  {{ userStore.user?.level && userStore.user.level !== 'normal' ? (userStore.user.level === 'svip' ? 'SVIP会员' : 'VIP会员') : '开通会员' }}
                 </NuxtLink>
                 <button
                   @click="handleLogout"

@@ -72,7 +72,7 @@
               <div
                 v-for="item in group"
                 :key="item.video.id"
-                class="group bg-(--bg-elevated) rounded-2xl border border-(--border-color) hover:border-primary/50 transition-all duration-300 overflow-hidden hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-0.5"
+                class="group bg-(--bg-elevated) rounded-2xl border border-(--border-color) hover:border-primary/50 transition-all duration-300 overflow-hidden hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-0.5 flex flex-col"
               >
                 <!-- Thumbnail -->
                 <div
@@ -86,7 +86,7 @@
                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <div v-else class="w-full h-full flex items-center justify-center bg-(--bg-secondary)">
-                    <Icon name="mdi:play-circle" class="text-(--text-muted)" size="64" />
+                    <Icon name="mdi:play-circle" class="text-(--text-muted)" size="44" />
                   </div>
 
                   <!-- Duration Badge -->
@@ -140,14 +140,14 @@
                 </div>
 
                 <!-- Content -->
-                <div class="p-4">
+                <div class="p-4 flex flex-col flex-1">
                   <h3
-                    class="text-(--text-primary) font-medium line-clamp-2 group-hover:text-primary transition-colors cursor-pointer mb-3 leading-snug"
+                    class="text-(--text-primary) text-sm font-medium line-clamp-2 group-hover:text-primary transition-colors cursor-pointer mb-3 leading-snug flex-1"
                     @click="openVideo(item.video.id)"
                   >
                     {{ item.video.title }}
                   </h3>
-                  <div class="flex items-center justify-between">
+                  <div class="flex items-center justify-between mt-auto">
                     <div class="flex items-center gap-2 text-xs text-(--text-muted)">
                       <Icon name="mdi:clock-outline" size="14" />
                       <span>{{ formatWatchTime(item.watchedAt) }}</span>

@@ -18,16 +18,6 @@
             <span class="text-sm font-medium">首页推荐</span>
           </button>
 
-          <!-- 视频列表 -->
-          <button
-            @click="handleMenuChange('/videos')"
-            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 cursor-pointer mb-1"
-            :class="activeMenu === '/videos' ? 'text-white bg-primary shadow-sm shadow-(--primary)/20' : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'"
-          >
-            <Icon name="heroicons:film" class="w-5 h-5" />
-            <span class="text-sm font-medium">全部视频</span>
-          </button>
-
           <!-- 观看历史 -->
           <button
             @click="handleMenuChange('/history')"
@@ -37,6 +27,27 @@
             <Icon name="heroicons:clock" class="w-5 h-5" />
             <span class="text-sm font-medium">观看历史</span>
           </button>
+
+          <!-- 视频列表 -->
+          <button
+            @click="handleMenuChange('/videos')"
+            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 cursor-pointer mb-1"
+            :class="activeMenu === '/videos' ? 'text-white bg-primary shadow-sm shadow-(--primary)/20' : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'"
+          >
+            <Icon name="heroicons:film" class="w-5 h-5" />
+            <span class="text-sm font-medium">视频</span>
+          </button>
+
+          <!-- 提示词 -->
+          <button
+            @click="handleMenuChange('/prompts')"
+            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 cursor-pointer mb-1"
+            :class="activeMenu.startsWith('/prompts') ? 'text-white bg-primary shadow-sm shadow-(--primary)/20' : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-secondary)'"
+          >
+            <Icon name="heroicons:sparkles" class="w-5 h-5" />
+            <span class="text-sm font-medium">提示词</span>
+          </button>
+
         </nav>
       </aside>
 
@@ -63,6 +74,7 @@ const activeMenu = computed(() => {
   if (path === '/') return '/'
   if (path === '/videos') return '/videos'
   if (path === '/history') return '/history'
+  if (path === '/prompts') return '/prompts'
   return path
 })
 

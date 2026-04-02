@@ -304,9 +304,7 @@ const generateAIPrompt = async () => {
   generatingPrompt.value = true
   try {
     const { $api } = useNuxtApp()
-    const res = await $api.post('/ai/generate-prompt', {
-      video_id: video.value.id,
-    })
+    const res = await $api.get(`/videos/${video.value.id}/ai-prompt`)
     aiPrompts.value = res.data?.prompts || []
   } catch (err) {
     console.error('生成提示词失败:', err)

@@ -238,3 +238,137 @@ INSERT INTO tags (name, category) VALUES
 -- 参考用途
 ('适合Sora', '参考用途'),
 ('适合Runway', '参考用途');
+
+-- =============================================
+-- 提示词平台相关表（v2 新增）
+-- =============================================
+
+-- 提示词表
+CREATE TABLE prompts (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    subtitle VARCHAR(500),
+    content TEXT NOT NULL, -- 完整提示词文本
+    preview_images TEXT[] DEFAULT '{}', -- 效果预览图URL数组
+    difficulty VARCHAR(20) DEFAULT 'beginner', -- beginner, intermediate, expert
+    applicable_tools VARCHAR(50)[] DEFAULT '{runway,pika,kling,jimeng}', -- 适用工具
+    params JSONB DEFAULT '{}', -- 工具参数建议（步数、CFG等）
+    required_level VARCHAR(20) DEFAULT 'free', -- free, vip, svip
+    price DECIMAL(10,2) DEFAULT 0,
+    copy_count INT DEFAULT 0, -- 被复制次数
+    rating_avg DECIMAL(3,2) DEFAULT 0, -- 平均评分
+    rating_count INT DEFAULT 0, -- 评分人数
+    status VARCHAR(20) DEFAULT 'pending', -- pending, approved, rejected
+    sort_order INT DEFAULT 0, -- 排序权重，越大越靠前
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_prompts_status ON prompts(status);
+CREATE INDEX idx_prompts_difficulty ON prompts(difficulty);
+CREATE INDEX idx_prompts_required_level ON prompts(required_level);
+CREATE INDEX idx_prompts_sort ON prompts(sort_order DESC, created_at DESC);
+
+-- 提示词全文检索
+ALTER TABLE prompts ADD COLUMN search_vector tsvector;
+
+CREATE FUNCTION prompts_search_vector_update() RETURNS trigger AS $$
+BEGIN
+    NEW.search_vector :=
+        setweight(to_tsvector('english', coalesce(NEW.title, '')), 'A') ||
+        setweight(to_tsvector('english', coalesce(NEW.subtitle, '')), 'B') ||
+        setweight(to_tsvector('english', coalesce(NEW.content, '')), 'C');
+    RETURN NEW;
+END
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER prompts_tsvectorupdate BEFORE INSERT OR UPDATE
+    ON prompts FOR EACH ROW EXECUTE FUNCTION prompts_search_vector_update();
+
+CREATE INDEX idx_prompts_search ON prompts USING GIN(search_vector);
+
+-- 提示词标签关联表
+CREATE TABLE prompt_tags (
+    prompt_id INT REFERENCES prompts(id) ON DELETE CASCADE,
+    tag_id INT REFERENCES tags(id) ON DELETE CASCADE,
+    PRIMARY KEY (prompt_id, tag_id)
+);
+
+-- 提示词评价表
+CREATE TABLE prompt_ratings (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    prompt_id INT REFERENCES prompts(id) ON DELETE CASCADE,
+    rating INT CHECK (rating >= 1 AND rating <= 5),
+    comment TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(user_id, prompt_id)
+);
+
+CREATE INDEX idx_prompt_ratings_prompt_id ON prompt_ratings(prompt_id);
+
+-- 提示词收藏表
+CREATE TABLE prompt_favorites (
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    prompt_id INT REFERENCES prompts(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(user_id, prompt_id)
+);
+
+CREATE INDEX idx_prompt_favorites_user_id ON prompt_favorites(user_id);
+
+-- 支付记录表
+CREATE TABLE payments (
+    id SERIAL PRIMARY KEY,
+    order_no VARCHAR(64) UNIQUE NOT NULL, -- 订单号
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    type VARCHAR(20) NOT NULL, -- prompt, membership
+    target_id INT, -- prompt_id 或 membership 配置ID
+    amount DECIMAL(10,2) NOT NULL,
+    currency VARCHAR(10) DEFAULT 'CNY',
+    payment_method VARCHAR(20), -- wechat, alipay
+    status VARCHAR(20) DEFAULT 'pending', -- pending, paid, expired, refunded
+    trade_no VARCHAR(128), -- 第三方交易号
+    paid_at TIMESTAMP,
+    expire_at TIMESTAMP, -- 订单过期时间
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_payments_user_id ON payments(user_id);
+CREATE INDEX idx_payments_order_no ON payments(order_no);
+CREATE INDEX idx_payments_status ON payments(status);
+
+-- 会员订阅表
+CREATE TABLE memberships (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    level VARCHAR(20) NOT NULL, -- vip, svip
+    start_date TIMESTAMP NOT NULL,
+    end_date TIMESTAMP NOT NULL,
+    auto_renew BOOLEAN DEFAULT FALSE,
+    payment_id INT REFERENCES payments(id),
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_memberships_user_id ON memberships(user_id);
+CREATE INDEX idx_memberships_end_date ON memberships(end_date);
+
+-- 初始化提示词平台标签数据
+INSERT INTO tags (name, category) VALUES
+-- 提示词分类
+('动作类', '提示词分类'),
+('场景转换', '提示词分类'),
+('风格类', '提示词分类'),
+('行业应用', '提示词分类'),
+('首尾帧', '提示词分类'),
+-- 适用工具
+('Runway', '适用工具'),
+('Pika', '适用工具'),
+('可灵', '适用工具'),
+('即梦', '适用工具'),
+('Sora', '适用工具'),
+-- 难度
+('新手', '难度'),
+('进阶', '难度'),
+('专业', '难度');

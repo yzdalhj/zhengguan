@@ -17,12 +17,12 @@
       />
       
       <!-- Placeholder -->
-      <div v-else class="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-700 to-slate-800">
+      <div v-else class="w-full h-full flex items-center justify-center bg-linear-to-br from-slate-700 to-slate-800">
         <Icon name="heroicons:film" class="w-8 h-8 text-slate-500" />
       </div>
 
       <!-- Gradient Overlay -->
-      <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div class="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       <!-- Duration Badge -->
       <div v-if="video.duration" class="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 bg-black/75 backdrop-blur-sm rounded text-xs text-white font-semibold">
@@ -30,10 +30,10 @@
       </div>
 
       <!-- Platform Badge -->
-      <div v-if="video.platform" class="absolute top-1.5 left-1.5 px-1.5 py-0.5 bg-black/60 backdrop-blur-sm rounded text-xs text-white font-medium flex items-center gap-0.5">
+      <div v-if="video.platform" class="absolute top-1.5 left-1.5 px-1.5 py-0.5 bg-black/60 backdrop-blur-sm rounded text-white font-medium flex items-center gap-0.5">
         <Icon v-if="video.platform === 'bilibili'" name="simple-icons:bilibili" class="w-3 h-3" />
         <Icon v-else-if="video.platform === 'youtube'" name="simple-icons:youtube" class="w-3 h-3" />
-        <span class="capitalize">{{ video.platform }}</span>
+        <span class="capitalize text-xs">{{ video.platform }}</span>
       </div>
 
       <!-- Hover Play Button -->
@@ -46,16 +46,16 @@
 
     <!-- Content -->
     <div class="mt-2 px-0.5">
-      <h3 class="text-(--text-primary) text-sm font-semibold line-clamp-2 group-hover:text-primary transition-colors leading-snug min-h-[2.75rem]">
+      <h3 class="text-(--text-primary) text-xs font-semibold line-clamp-2 group-hover:text-primary transition-colors leading-snug min-h-8">
         {{ video.title }}
       </h3>
 
       <div class="flex items-center justify-between mt-1.5 text-xs text-(--text-muted)">
         <div class="flex items-center gap-1">
-          <div class="w-4 h-4 rounded-full bg-gradient-to-br from-primary to-indigo-500 flex items-center justify-center text-white text-[8px] font-semibold shrink-0">
+          <div class="w-4 h-4 rounded-full bg-linear-to-br from-primary to-indigo-500 flex items-center justify-center text-white text-[8px] font-semibold shrink-0">
             {{ (video.author || 'U').charAt(0).toUpperCase() }}
           </div>
-          <span class="hover:text-(--text-primary) transition-colors truncate max-w-[100px]">{{ video.author || '未知作者' }}</span>
+          <span class="hover:text-(--text-primary) transition-colors truncate max-w-25">{{ video.author || '未知作者' }}</span>
         </div>
         <div class="flex items-center gap-2">
           <span class="flex items-center gap-1 shrink-0">

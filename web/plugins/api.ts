@@ -54,7 +54,11 @@ export class ApiClient {
       },
       (error) => {
         const message = error.response?.data?.error || error.message || '请求失败'
-        return Promise.reject({ error: message, status: error.response?.status })
+        return Promise.reject({
+          error: message,
+          status: error.response?.status,
+          required_level: error.response?.data?.required_level,
+        })
       }
     )
   }

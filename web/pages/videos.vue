@@ -33,7 +33,7 @@
       <!-- 分类筛选 -->
       <div 
         class="px-5 py-4 transition-all duration-300 overflow-hidden relative"
-        :class="{ 'max-h-25': !filtersExpanded, 'max-h-[128rem]': filtersExpanded }"
+        :class="{ 'max-h-25': !filtersExpanded, 'max-h-512': filtersExpanded }"
       >
         <!-- 右下角挂钩式展开/收起按钮 -->
         <button
@@ -216,7 +216,7 @@ useHead({
 const videoStore = useVideoStore()
 
 // 筛选区域展开状态
-const filtersExpanded = ref(true)
+const filtersExpanded = ref(false)
 
 // Computed
 const videos = computed(() => videoStore.videos || [])

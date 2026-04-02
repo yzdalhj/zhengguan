@@ -97,6 +97,11 @@ export const useUserStore = defineStore('user', {
       }
     },
 
+    // 别名，供 composable 使用
+    async fetchUser() {
+      return this.getMe()
+    },
+
     logout() {
       this.clearToken()
     },

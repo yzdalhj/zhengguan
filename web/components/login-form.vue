@@ -35,15 +35,18 @@
 
       <form @submit.prevent="handleSubmit" class="space-y-6 flex-1">
         <!-- 扫码登录 -->
-        <div v-if="activeTab === 'qrcode'" class="flex flex-col items-center justify-center py-8">
-          <div class="w-48 h-48 bg-(--bg-secondary) border border-(--border-color) rounded-xl flex items-center justify-center mb-4">
-            <div class="text-center text-(--text-muted)">
-              <Icon name="mdi:qrcode" size="64" />
-              <p class="mt-2 text-sm">二维码区域</p>
-            </div>
+        <div v-if="activeTab === 'qrcode'" class="flex flex-col items-center justify-center py-12">
+          <div class="w-20 h-20 bg-(--bg-secondary) border border-(--border-color) rounded-2xl flex items-center justify-center mb-6">
+            <Icon name="mdi:qrcode-scan" class="text-(--text-muted)" size="40" />
           </div>
-          <p class="text-(--text-secondary) text-sm">请使用微信扫码登录</p>
-          <p class="text-(--text-muted) text-xs mt-2">扫码登录功能暂未开放</p>
+          <h3 class="text-lg font-medium text-(--text-primary) mb-2">扫码登录</h3>
+          <p class="text-(--text-secondary) text-sm mb-1">请使用微信扫码登录</p>
+          <div class="mt-4 px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+            <p class="text-amber-500 text-sm flex items-center gap-2">
+              <Icon name="mdi:clock-outline" size="16" />
+              <span>即将上线，敬请期待</span>
+            </p>
+          </div>
         </div>
 
         <!-- 手机号登录 -->
@@ -84,22 +87,17 @@
             </button>
           </div>
 
-          <div v-if="mode === 'login' && loginMethod === 'code'" class="flex">
-            <input
-              v-model="code"
-              type="text"
-              required
-              class="flex-1 px-5 py-4 bg-(--bg-secondary) border border-(--border-color) rounded-xl text-(--text-primary) text-base placeholder:text-(--text-muted) transition-all duration-200 focus:outline-none focus:border-(--text-secondary) focus:ring-0 mr-3"
-              placeholder="请输入验证码"
-            />
-            <button
-              type="button"
-              @click="sendCode"
-              :disabled="countdown > 0 || !phone"
-              class="px-6 py-4 bg-(--bg-secondary) border border-(--border-color) rounded-xl text-(--text-secondary) text-base font-medium whitespace-nowrap hover:bg-(--bg-elevated) transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {{ countdown > 0 ? `${countdown}s后重发` : '获取验证码' }}
-            </button>
+          <div v-if="mode === 'login' && loginMethod === 'code'" class="flex flex-col items-center justify-center py-6">
+            <div class="w-16 h-16 bg-(--bg-secondary) border border-(--border-color) rounded-2xl flex items-center justify-center mb-4">
+              <Icon name="mdi:message-text-outline" class="text-(--text-muted)" size="32" />
+            </div>
+            <p class="text-(--text-secondary) text-sm mb-1">验证码登录</p>
+            <div class="mt-3 px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+              <p class="text-amber-500 text-sm flex items-center gap-2">
+                <Icon name="mdi:clock-outline" size="16" />
+                <span>即将上线，敬请期待</span>
+              </p>
+            </div>
           </div>
 
           <div v-if="mode === 'login' && loginMethod === 'password'">
@@ -235,14 +233,14 @@ const togglePassword = () => {
 }
 
 const canSubmit = computed(() => {
-  // 扫码登录不需要表单验证
-  if (props.mode === 'login' && activeTab.value === 'qrcode') return true
+  // 扫码登录和验证码登录功能暂未开放，禁用提交
+  if (props.mode === 'login' && activeTab.value === 'qrcode') return false
+  if (props.mode === 'login' && loginMethod.value === 'code') return false
   
   // 手机号登录/注册需要手机号
   if (!phone.value) return false
   
   if (props.mode === 'login') {
-    if (loginMethod.value === 'code' && !code.value) return false
     if (loginMethod.value === 'password' && !password.value) return false
   }
   
@@ -282,23 +280,8 @@ const handleSubmit = async () => {
   try {
     if (props.mode === 'login') {
       // 登录逻辑
-      if (activeTab.value === 'qrcode') {
-        // 扫码登录（预留）
-        error.value = '扫码登录功能暂未开放'
-        loading.value = false
-        return
-      }
-      
-      // 手机号登录
-      if (loginMethod.value === 'password') {
-        // 手机号密码登录
-        await userStore.loginByPhone(phone.value, password.value)
-      } else {
-        // 手机号验证码登录（预留）
-        error.value = '验证码登录功能暂未开放'
-        loading.value = false
-        return
-      }
+      // 手机号密码登录
+      await userStore.loginByPhone(phone.value, password.value)
       
       // 登录成功
       emit('success')

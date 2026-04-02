@@ -4,9 +4,9 @@ import type { RefreshToken } from '../types';
 export const createRefreshToken = async (
   userId: number,
   token: string,
+  expiresAt: Date,
   userAgent?: string,
-  ipAddress?: string,
-  expiresAt: Date
+  ipAddress?: string
 ): Promise<RefreshToken> => {
   const result = await pool.query(
     'INSERT INTO refresh_tokens (user_id, token, user_agent, ip_address, expires_at) VALUES ($1, $2, $3, $4, $5) RETURNING *',

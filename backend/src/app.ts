@@ -9,6 +9,9 @@ import videoRoutes from './routes/videos';
 import tagRoutes from './routes/tags';
 import userRoutes from './routes/user';
 import adminRoutes from './routes/admin';
+import promptRoutes from './routes/prompts';
+import paymentRoutes from './routes/payments';
+import membershipRoutes from './routes/memberships';
 import { startScheduler } from './crawler/scheduler';
 
 dotenv.config();
@@ -43,6 +46,9 @@ app.use('/api/videos', videoRoutes);
 app.use('/api/tags', tagRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/prompts', promptRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/memberships', membershipRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({
